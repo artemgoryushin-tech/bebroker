@@ -1,0 +1,8 @@
+deploy:test:
+  only:
+    - dev
+  script:
+    - whoami
+    - cd /var/www/bebroker
+    - git fetch
+    - git reset --hard origin/dev
