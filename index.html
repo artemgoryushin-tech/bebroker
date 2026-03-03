@@ -3031,7 +3031,7 @@
             </p>
           </div>
 
-          <form class="form-grid" action="#" method="post">
+          <form class="form-grid" id="conversion-form">
             <div class="form-row">
               <div class="field">
                 <label for="name">Name</label>
@@ -3052,7 +3052,7 @@
               </div>
               <div class="field">
                 <label for="messenger">Telegram / WhatsApp</label>
-                <input id="messenger" name="tg" type="text" placeholder="@username" />
+                <input id="messenger" name="terms_agree" type="text" placeholder="@username" />
               </div>
             </div>
 
@@ -3118,7 +3118,7 @@
 
           <div class="field">
             <label for="modal-messenger">Telegram / WhatsApp</label>
-            <input id="modal-messenger" name="tg" type="text" placeholder="@username" />
+            <input id="modal-messenger" name="terms_agree" type="text" placeholder="@username" />
           </div>
 
           <div class="field">
@@ -3154,203 +3154,7 @@
       </div>
     </div>
   </div>
-
-  <script>
-    const elements = document.querySelectorAll('.reveal');
-    const topbar = document.querySelector('.topbar');
-    const hero = document.querySelector('.hero');
-    const heroTiles = document.querySelectorAll('.hero__tile[data-depth]');
-    const openModalButtons = document.querySelectorAll('[data-open-modal]');
-    const modal = document.getElementById('request-modal');
-    const modalCloseButtons = modal ? modal.querySelectorAll('[data-close-modal]') : [];
-    const modalForm = document.getElementById('request-modal-form');
-    const modalFormWrap = modal ? modal.querySelector('[data-modal-form-wrap]') : null;
-    const modalSuccess = modal ? modal.querySelector('[data-modal-success]') : null;
-    const modalResetButton = modal ? modal.querySelector('[data-modal-reset]') : null;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let previouslyFocused = null;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-
-    elements.forEach((element) => observer.observe(element));
-
-    const heroFloating = document.querySelector('.hero__floating');
-
-    const updateTopbar = () => {
-      topbar.classList.toggle('is-scrolled', window.scrollY > 16);
-    };
-
-    /* Scroll-based fall & fade for hero tiles (Keitaro-style: tiles drift DOWN) */
-    const updateTileScatter = () => {
-      if (!hero || !heroFloating) return;
-      const heroH = hero.offsetHeight;
-      const scrollY = window.scrollY;
-      // progress: 0 at top, 1 when scrolled past ~55% of hero
-      const progress = Math.min(1, Math.max(0, scrollY / (heroH * 0.55)));
-      // ease-out curve for smoother feel
-      const ease = 1 - Math.pow(1 - progress, 3);
-      // fade the entire floating layer
-      heroFloating.style.opacity = 1 - ease;
-      // each tile falls downward at its own speed (parallax depth)
-      heroTiles.forEach((tile) => {
-        const fallSpeed = Number(tile.dataset.fall || 1);
-        const depth = Number(tile.dataset.depth || 10);
-        // primary motion: fall downward; slight horizontal drift based on position
-        const fallY = ease * 120 * fallSpeed;
-        const driftX = ease * (depth - 11) * 8; // subtle left/right drift
-        tile.style.translate = `${driftX}px ${fallY}px`;
-        tile.style.scale = `${1 - ease * 0.15}`;
-        tile.style.opacity = `${1 - ease * 0.6}`;
-      });
-    };
-
-    window.addEventListener('scroll', () => {
-      updateTopbar();
-      if (!reduceMotion) updateTileScatter();
-    }, { passive: true });
-    updateTopbar();
-    if (!reduceMotion) updateTileScatter();
-
-    if (!reduceMotion && hero && heroTiles.length) {
-      let targetX = 0;
-      let targetY = 0;
-      let currentX = 0;
-      let currentY = 0;
-      let rafId = 0;
-
-      const renderTiles = () => {
-        currentX += (targetX - currentX) * 0.12;
-        currentY += (targetY - currentY) * 0.12;
-
-        heroTiles.forEach((tile) => {
-          const depth = Number(tile.dataset.depth || 10);
-          tile.style.setProperty('--tx', `${currentX * depth}px`);
-          tile.style.setProperty('--ty', `${currentY * depth}px`);
-        });
-
-        const isSettled = Math.abs(targetX - currentX) < 0.002 && Math.abs(targetY - currentY) < 0.002;
-
-        if (isSettled) {
-          rafId = 0;
-          return;
-        }
-
-        rafId = window.requestAnimationFrame(renderTiles);
-      };
-
-      const requestRender = () => {
-        if (!rafId) {
-          rafId = window.requestAnimationFrame(renderTiles);
-        }
-      };
-
-      hero.addEventListener('pointermove', (event) => {
-        const rect = hero.getBoundingClientRect();
-        targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-        targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-        requestRender();
-      });
-
-      hero.addEventListener('pointerleave', () => {
-        targetX = 0;
-        targetY = 0;
-        requestRender();
-      });
-    }
-
-    const getFocusableElements = () => {
-      if (!modal) return [];
-      return [...modal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex=\"-1\"])')].filter(
-        (el) => !el.hasAttribute('hidden')
-      );
-    };
-
-    const resetModalState = () => {
-      if (!modalForm || !modalFormWrap || !modalSuccess) return;
-      modalForm.reset();
-      modalFormWrap.style.display = 'block';
-      modalSuccess.classList.remove('is-visible');
-    };
-
-    const openModal = () => {
-      if (!modal) return;
-      previouslyFocused = document.activeElement;
-      resetModalState();
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('modal-open');
-      const focusables = getFocusableElements();
-      if (focusables.length) focusables[0].focus();
-    };
-
-    const closeModal = () => {
-      if (!modal) return;
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('modal-open');
-      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
-    };
-
-    openModalButtons.forEach((button) => {
-      button.addEventListener('click', (event) => {
-        event.preventDefault();
-        openModal();
-      });
-    });
-
-    modalCloseButtons.forEach((button) => {
-      button.addEventListener('click', closeModal);
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (!modal || !modal.classList.contains('is-open')) return;
-
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeModal();
-        return;
-      }
-
-      if (event.key !== 'Tab') return;
-
-      const focusables = getFocusableElements();
-      if (!focusables.length) return;
-
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    });
-
-    if (modalForm && modalFormWrap && modalSuccess) {
-      modalForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        if (!modalForm.reportValidity()) return;
-        modalFormWrap.style.display = 'none';
-        modalSuccess.classList.add('is-visible');
-      });
-    }
-
-    if (modalResetButton) {
-      modalResetButton.addEventListener('click', resetModalState);
-    }
-  </script>
+  <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>

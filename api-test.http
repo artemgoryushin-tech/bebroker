@@ -1,0 +1,14 @@
+### СохраниттСоздание объявления (POST)
+POST https://quadcode.foach.site/api/notPopup/
+content-type: application/json
+accept: application/json
+X-Requested-With: XMLHttpRequest
+
+{
+    "first_name": "test Name",
+    "email": "test@test.com",
+    "phone": "89999999999",
+    "terms_agree": "qqq",
+    "current_business": "test Organisation",
+    "why_launch": "qqq"
+}
