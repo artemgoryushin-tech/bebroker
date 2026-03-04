@@ -6,9 +6,10 @@ X-Requested-With: XMLHttpRequest
 
 {
     "first_name": "test Name",
-    "email": "test@test.com",
+    "email": "testtest.com",
     "phone": "89999999999",
-    "terms_agree": "qqq",
+    "terms_agree": true,
     "current_business": "test Organisation",
-    "why_launch": "qqq"
+    "why_launch": "qqq", 
+    "tg": 123
 }

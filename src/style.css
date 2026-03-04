@@ -171,7 +171,8 @@ section {
 	transition:
 		transform 0.22s ease,
 		background 0.22s ease,
-		border-color 0.22s ease;
+		border-color 0.22s ease,
+		opacity 0.3s ease-in-out;
 }
 
 .btn:active {
@@ -183,6 +184,12 @@ section {
 	outline-offset: 2px;
 }
 
+.btn:disabled {
+	opacity: 0.3;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
 .btn--primary {
 	background: linear-gradient(180deg, #2d66f2 0%, var(--red) 100%);
 	color: #fff;
@@ -192,6 +199,11 @@ section {
 .btn--primary:hover {
 	transform: translateY(-1px);
 	background: linear-gradient(180deg, #2460f0 0%, var(--red-deep) 100%);
+}
+
+.btn--primary:disabled:hover {
+	transform: none;
+	background: linear-gradient(180deg, #2d66f2 0%, var(--red) 100%);
 }
 
 .btn--ghost {
@@ -1587,8 +1599,176 @@ section {
 }
 
 .form-grid {
+	position: relative;
 	display: grid;
 	gap: 14px;
+
+	--transition-param: 0.3s ease-in-out;
+}
+
+.form-grid {
+	&._loading {
+		& > .form-row,
+		& > .field,
+		& > .modal-check {
+			pointer-events: none;
+			opacity: 0.5;
+		}
+	}
+
+	&._error,
+	&._success {
+		& > .form-row,
+		& > .field,
+		& > .modal-check,
+		& > .btn {
+			pointer-events: none;
+			opacity: 0;
+		}
+	}
+}
+
+.form-row,
+.field,
+.modal-check {
+	transition: var(--transition-param);
+	transition-property: opacity;
+}
+
+.form-loading {
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+
+	transition: var(--transition-param);
+	transition-property: visibility, opacity;
+
+	& svg {
+		width: 100px;
+		height: 100px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+
+		& rect {
+			fill: #eaeaea;
+		}
+	}
+}
+
+.form-grid._loading {
+	& .form-loading {
+		visibility: visible;
+		opacity: 1;
+		pointer-events: all;
+	}
+}
+
+.form-message {
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+
+	transition: var(--transition-param);
+	transition-property: visibility, opacity;
+}
+
+.form-message__container {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	max-width: 320px;
+	width: 100%;
+	gap: 24px;
+	padding: 24px;
+	background: var(--bg);
+	border-radius: var(--radius-md);
+
+	&._error {
+		& .form-message__icon path {
+			fill: #f10000;
+		}
+	}
+
+	&._success {
+		& .form-message__icon path {
+			fill: #2d66f2;
+		}
+	}
+}
+
+.form-message__icon {
+	width: 60px;
+	height: 60px;
+}
+
+.form-message__text {
+	color: var(--text-secondary);
+	font-size: 16px;
+	line-height: 1.55;
+	text-align: center;
+}
+
+.form-message__close {
+	color: #8e9bae;
+	cursor: pointer;
+	background-color: transparent;
+	border: none;
+	align-items: center;
+	justify-items: center;
+	width: 36px;
+	height: 36px;
+	font-size: 26px;
+	line-height: 1;
+	display: grid;
+	position: absolute;
+	top: 6px;
+	right: 6px;
+}
+
+.form-grid {
+	&._error,
+	&._success {
+		& .form-message {
+			visibility: visible;
+			opacity: 1;
+			pointer-events: all;
+		}
+	}
+
+	&._error {
+		.form-message__container {
+			&._error {
+				display: flex;
+			}
+		}
+	}
+
+	&._success {
+		.form-message__container {
+			&._success {
+				display: flex;
+			}
+		}
+	}
 }
 
 .form-grid .btn {
@@ -1598,6 +1778,7 @@ section {
 .field {
 	display: grid;
 	gap: 6px;
+	align-content: start;
 }
 
 .field label {
@@ -1666,6 +1847,24 @@ section {
 	outline: none;
 	border-color: var(--red);
 	box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.18);
+}
+
+.field._error {
+	& input {
+		border-color: #f10000;
+	}
+}
+
+.field span[data-error-message] {
+	display: none;
+	color: #ff2020;
+	font-size: 12px;
+	line-height: 1.05;
+	text-align: right;
+}
+
+.field._error span[data-error-message] {
+	display: block;
 }
 
 .footer {
@@ -2359,6 +2558,7 @@ body.modal-open {
 		width: min(100%, calc(100% - 24px));
 		padding-left: max(12px, env(safe-area-inset-left));
 		padding-right: max(12px, env(safe-area-inset-right));
+		gap: 20px;
 	}
 
 	.section {

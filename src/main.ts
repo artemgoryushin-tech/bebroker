@@ -1,4 +1,5 @@
 import "./style.css";
+import { createDisableForm, createFormClassNameMod, removeValidationInputErrors, submitForm } from "./api/submitForm";
 
 // Типизация DOM-элементов с использованием Generic-типов
 const elements = document.querySelectorAll<HTMLElement>(".reveal");
@@ -12,7 +13,7 @@ const modalForm = document.getElementById("request-modal-form") as HTMLFormEleme
 const modalFormWrap = modal ? modal.querySelector<HTMLElement>("[data-modal-form-wrap]") : null;
 const modalSuccess = modal ? modal.querySelector<HTMLElement>("[data-modal-success]") : null;
 const modalResetButton = modal ? modal.querySelector<HTMLElement>("[data-modal-reset]") : null;
-const conversionForm = document.getElementById("conversion-form") as HTMLFormElement | null;
+const conversionForm = document.querySelector<HTMLFormElement>("[data-form='conversion-form']");
 const heroFloating = document.querySelector<HTMLElement>(".hero__floating");
 
 const reduceMotion: boolean = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -203,38 +204,22 @@ if (modalForm && modalFormWrap && modalSuccess) {
 	});
 }
 
-const submitForm = async (event: SubmitEvent): Promise<void> => {
-	const form = event.target as HTMLFormElement;
-	try {
-		const formData = new FormData(form);
-		const data = Object.fromEntries(formData.entries());
-
-		const response = await fetch("https://quadcode.foach.site/api/notPopup/", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json", // Критически важно для многих бэкендов
-				"X-Requested-With": "XMLHttpRequest",
-			},
-			body: JSON.stringify(data),
-		});
-
-		if (!response.ok) {
-			throw new Error(`Ошибка: ${response.status}`);
-		}
-
-		const result = await response.json();
-		console.log("Успех:", result);
-		form.reset();
-	} catch (error) {
-		console.error("Ошибка при отправке:", error);
-	}
-};
-
 if (conversionForm) {
 	conversionForm.addEventListener("submit", async (event: SubmitEvent) => {
 		event.preventDefault();
 		await submitForm(event);
+	});
+
+	const messageBtn = conversionForm.querySelectorAll<HTMLButtonElement>("[data-message-btn]");
+	const formClassNameMod = createFormClassNameMod(conversionForm);
+	const disableManager = createDisableForm(conversionForm);
+
+	messageBtn.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			formClassNameMod.removeAll();
+			disableManager.enable();
+			removeValidationInputErrors(conversionForm);
+		});
 	});
 }
 
