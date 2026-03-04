@@ -14,23 +14,23 @@ function addValidationInputErrors(errors: SubmitErrorValidation["errors"], form:
 	});
 }
 
-export function removeValidationInputErrors(form: HTMLFormElement) {
-	form.querySelectorAll<HTMLInputElement>("[name]").forEach((input) => {
+export function removeValidationInputErrors(element: HTMLElement) {
+	element.querySelectorAll<HTMLInputElement>("[name]").forEach((input) => {
 		const inputWrap = input.closest<HTMLDivElement>(".field._error");
 		if (inputWrap) inputWrap.classList.remove("_error");
 	});
 }
 
-export function createFormClassNameMod(form: HTMLFormElement) {
+export function createFormClassNameMod(element: HTMLElement) {
 	return {
 		error(force: boolean = true) {
-			form.classList.toggle("_error", force);
+			element.classList.toggle("_error", force);
 		},
 		success(force: boolean = true) {
-			form.classList.toggle("_success", force);
+			element.classList.toggle("_success", force);
 		},
 		loading(force: boolean = true) {
-			form.classList.toggle("_loading", force);
+			element.classList.toggle("_loading", force);
 		},
 		removeAll() {
 			this.error(false);
@@ -40,8 +40,8 @@ export function createFormClassNameMod(form: HTMLFormElement) {
 	};
 }
 
-export function createDisableForm(form: HTMLFormElement) {
-	const submitButton = form.querySelector<HTMLButtonElement>('[type="submit"]');
+export function createDisableForm(element: HTMLElement) {
+	const submitButton = element.querySelector<HTMLButtonElement>('[type="submit"]');
 
 	return {
 		disable() {
@@ -53,37 +53,39 @@ export function createDisableForm(form: HTMLFormElement) {
 	};
 }
 
-export async function submitForm(event: SubmitEvent): Promise<void> {
+export interface SubmitFormCallback {
+	response?: () => void;
+	validationErrors?: () => void;
+	success?: () => void;
+	error?: () => void;
+	finally?: () => void;
+}
+
+export async function submitForm(event: SubmitEvent, callback: SubmitFormCallback = {}): Promise<void> {
+	event.preventDefault();
 	const form = event.target as HTMLFormElement;
-	const formClassNameMod = createFormClassNameMod(form);
-	const disableManager = createDisableForm(form);
 
 	try {
-		formClassNameMod.loading(true);
-		disableManager.disable();
-
 		const formData = new FormData(form);
 		const data = Object.fromEntries(formData.entries());
 		const response = await formService.submit(data);
 
-		formClassNameMod.loading(false);
-
-		console.log(response);
+		callback.response?.();
 
 		if ("errors" in response) {
+			callback.validationErrors?.();
 			removeValidationInputErrors(form);
 			addValidationInputErrors(response.errors, form);
-			formClassNameMod.removeAll();
-			disableManager.enable();
 		}
 
 		if ("success" in response) {
-			formClassNameMod.success(true);
 			removeValidationInputErrors(form);
-			form.reset();
+			callback.success?.();
 		}
 	} catch (error) {
-		formClassNameMod.error(true);
 		console.error("Error", error);
+		callback.error?.();
+	} finally {
+		callback.finally?.();
 	}
 }

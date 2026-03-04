@@ -1,5 +1,11 @@
 import "./style.css";
-import { createDisableForm, createFormClassNameMod, removeValidationInputErrors, submitForm } from "./api/submitForm";
+import {
+	createDisableForm,
+	createFormClassNameMod,
+	removeValidationInputErrors,
+	submitForm,
+	type SubmitFormCallback,
+} from "./api/submitForm";
 
 // Типизация DOM-элементов с использованием Generic-типов
 const elements = document.querySelectorAll<HTMLElement>(".reveal");
@@ -9,10 +15,8 @@ const heroTiles = document.querySelectorAll<HTMLElement>(".hero__tile[data-depth
 const openModalButtons = document.querySelectorAll<HTMLElement>("[data-open-modal]");
 const modal = document.getElementById("request-modal") as HTMLElement | null;
 const modalCloseButtons = modal ? modal.querySelectorAll<HTMLElement>("[data-close-modal]") : [];
-const modalForm = document.getElementById("request-modal-form") as HTMLFormElement | null;
-const modalFormWrap = modal ? modal.querySelector<HTMLElement>("[data-modal-form-wrap]") : null;
-const modalSuccess = modal ? modal.querySelector<HTMLElement>("[data-modal-success]") : null;
-const modalResetButton = modal ? modal.querySelector<HTMLElement>("[data-modal-reset]") : null;
+const modalForm = document.querySelector<HTMLFormElement>("[data-form='modal-form']");
+const modalFormWrap = modal?.querySelector<HTMLElement>("[data-modal-form-wrap]");
 const conversionForm = document.querySelector<HTMLFormElement>("[data-form='conversion-form']");
 const heroFloating = document.querySelector<HTMLElement>(".hero__floating");
 
@@ -131,17 +135,9 @@ const getFocusableElements = (): HTMLElement[] => {
 	return Array.from(modal.querySelectorAll<HTMLElement>(selector)).filter((el) => !el.hasAttribute("hidden"));
 };
 
-const resetModalState = (): void => {
-	if (!modalForm || !modalFormWrap || !modalSuccess) return;
-	modalForm.reset();
-	modalFormWrap.style.display = "block";
-	modalSuccess.classList.remove("is-visible");
-};
-
 const openModal = (): void => {
 	if (!modal) return;
 	previouslyFocused = document.activeElement as HTMLElement | null;
-	resetModalState();
 	modal.classList.add("is-open");
 	modal.setAttribute("aria-hidden", "false");
 	document.body.classList.add("modal-open");
@@ -195,24 +191,83 @@ document.addEventListener("keydown", (event: KeyboardEvent) => {
 });
 
 // Form Submissions
-if (modalForm && modalFormWrap && modalSuccess) {
-	modalForm.addEventListener("submit", (event: SubmitEvent) => {
-		event.preventDefault();
-		if (!modalForm.reportValidity()) return;
-		modalFormWrap.style.display = "none";
-		modalSuccess.classList.add("is-visible");
+if (modalForm && modalFormWrap) {
+	const messageBtn = modalFormWrap.querySelector<HTMLButtonElement>("[data-message-btn]");
+	const closeBtn = [
+		modalFormWrap.parentNode?.querySelector<HTMLButtonElement>("[data-close-modal]"),
+		modalFormWrap
+			.closest<HTMLButtonElement>("#request-modal")
+			?.querySelector<HTMLButtonElement>("[data-close-modal]"),
+	];
+	const wrapClassNameMod = createFormClassNameMod(modalFormWrap);
+	const disableManager = createDisableForm(modalForm);
+
+	const formCallback: SubmitFormCallback = {
+		response() {
+			wrapClassNameMod.loading(false);
+		},
+		validationErrors() {
+			wrapClassNameMod.removeAll();
+			disableManager.enable();
+		},
+		success() {
+			wrapClassNameMod.success(true);
+			modalForm.reset();
+			disableManager.enable();
+		},
+		error() {
+			wrapClassNameMod.error(true);
+		},
+	};
+
+	modalForm.addEventListener("submit", async (event: SubmitEvent) => {
+		wrapClassNameMod.loading(true);
+		disableManager.disable();
+		await submitForm(event, formCallback);
 	});
+
+	closeBtn.forEach((btn) => {
+		btn?.addEventListener("click", () => {
+			wrapClassNameMod.removeAll();
+		});
+	});
+
+	if (messageBtn) {
+		messageBtn.addEventListener("click", () => {
+			wrapClassNameMod.removeAll();
+			disableManager.enable();
+			removeValidationInputErrors(modalForm);
+		});
+	}
 }
 
 if (conversionForm) {
-	conversionForm.addEventListener("submit", async (event: SubmitEvent) => {
-		event.preventDefault();
-		await submitForm(event);
-	});
-
 	const messageBtn = conversionForm.querySelectorAll<HTMLButtonElement>("[data-message-btn]");
 	const formClassNameMod = createFormClassNameMod(conversionForm);
 	const disableManager = createDisableForm(conversionForm);
+
+	const formCallback: SubmitFormCallback = {
+		response() {
+			formClassNameMod.loading(false);
+		},
+		validationErrors() {
+			formClassNameMod.removeAll();
+			disableManager.enable();
+		},
+		success() {
+			formClassNameMod.success(true);
+			conversionForm.reset();
+		},
+		error() {
+			formClassNameMod.error(true);
+		},
+	};
+
+	conversionForm.addEventListener("submit", async (event: SubmitEvent) => {
+		formClassNameMod.loading(true);
+		disableManager.disable();
+		await submitForm(event, formCallback);
+	});
 
 	messageBtn.forEach((btn) => {
 		btn.addEventListener("click", () => {
@@ -221,8 +276,4 @@ if (conversionForm) {
 			removeValidationInputErrors(conversionForm);
 		});
 	});
-}
-
-if (modalResetButton) {
-	modalResetButton.addEventListener("click", resetModalState);
 }
