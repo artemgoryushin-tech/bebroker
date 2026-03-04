@@ -6,3 +6,7 @@ deploy:test:
     - cd /var/www/bebroker
     - git fetch
     - git reset --hard origin/dev
+    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
+    - nvm use v24
+    - yarn install
+    - yarn build
