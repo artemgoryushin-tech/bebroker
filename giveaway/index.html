@@ -1537,9 +1537,9 @@
       }
 
       .giveaway-offer__price {
-        margin: 10px 0 0;
+        margin: 4px 0 0;
         display: flex;
-        align-items: baseline;
+        align-items: center;
         gap: 12px;
       }
 
@@ -1547,14 +1547,32 @@
         font-size: clamp(24px, 2.6vw, 34px);
         font-weight: 600;
         color: #8b97aa;
-        text-decoration: line-through;
-        text-decoration-thickness: 2px;
-        text-decoration-color: rgba(139, 151, 170, 0.9);
+        position: relative;
+        display: inline-block;
+      }
+
+      .giveaway-offer__old::after {
+        content: "";
+        position: absolute;
+        left: -2px;
+        right: -2px;
+        top: 54%;
+        height: 3px;
+        border-radius: 999px;
+        background: rgba(139, 151, 170, 0.92);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
       }
 
       .giveaway-offer__arrow {
         font-size: 22px;
         color: #8a97ab;
+        align-self: center;
+        margin: 0 2px;
+        opacity: 0;
+        transform: translateX(-8px);
+        transition: opacity 0.35s ease 0.45s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.45s;
       }
 
       .giveaway-offer__new {
@@ -1563,6 +1581,27 @@
         font-weight: 700;
         color: var(--red);
         letter-spacing: -0.02em;
+        opacity: 0;
+        transform: translateX(-8px);
+        transition: opacity 0.35s ease 0.62s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.62s;
+      }
+
+      .giveaway-offer.is-price-animated .giveaway-offer__old::after {
+        transform: scaleX(1);
+      }
+
+      .giveaway-offer.is-price-animated .giveaway-offer__arrow,
+      .giveaway-offer.is-price-animated .giveaway-offer__new {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .giveaway-offer__old::after,
+        .giveaway-offer__arrow,
+        .giveaway-offer__new {
+          transition: none;
+        }
       }
 
       .giveaway-offer__countdown {
@@ -1629,6 +1668,16 @@
       }
 
       @media (max-width: 640px) {
+        .categories-header {
+          gap: 18px;
+          text-align: center;
+        }
+
+        .categories-header__left,
+        .categories-header__right {
+          width: 100%;
+        }
+
         .categories-grid {
           grid-template-columns: 1fr;
         }
@@ -1636,12 +1685,82 @@
         .category-card:nth-child(4) {
           margin-top: 24px;
         }
+        .category-card {
+          width: min(100%, 340px);
+          height: 388px;
+          border-radius: 96px;
+        }
         .giveaway-offer {
           width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .giveaway-offer__label,
+        .giveaway-offer__countdown,
+        .giveaway-offer__date {
+          text-align: center;
         }
         .giveaway-offer__price {
-          flex-wrap: wrap;
-          gap: 8px 10px;
+          flex-wrap: nowrap;
+          justify-content: center;
+          gap: 6px;
+        }
+        .giveaway-offer__old {
+          font-size: clamp(26px, 8vw, 34px);
+        }
+        .giveaway-offer__arrow {
+          font-size: 20px;
+        }
+        .giveaway-offer__new {
+          font-size: clamp(34px, 10vw, 48px);
+        }
+
+        .category-card--art .category-card__inner {
+          padding: 56px 16px 176px;
+        }
+
+        .category-card--art .category-card__img--traffic {
+          height: 156px;
+          bottom: 2px;
+        }
+
+        .category-card--art .category-card__title {
+          max-width: 200px;
+        }
+
+        .category-card--art,
+        .category-card--revenue {
+          height: 426px;
+        }
+
+        .category-card--revenue .category-card__inner {
+          padding: 56px 16px 168px;
+        }
+
+        .category-card--revenue .category-card__img--revenue {
+          height: 156px;
+          bottom: 2px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .giveaway-offer__label {
+          font-size: 12px;
+          letter-spacing: 0.05em;
+        }
+
+        .giveaway-offer__countdown {
+          font-size: 14px;
+        }
+
+        .giveaway-offer__date {
+          font-size: 12px;
+        }
+
+        .category-card {
+          width: min(100%, 320px);
+          border-radius: 88px;
         }
       }
 
@@ -1833,6 +1952,80 @@
       .category-card__img--h55 {
         height: 160px;
         bottom: -24px;
+      }
+
+      .category-card__img--traffic {
+        height: 168px;
+        bottom: 10px;
+        -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+        mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+      }
+
+      .category-card__img--revenue {
+        height: 184px;
+        bottom: -2px;
+        -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+        mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+      }
+
+      .category-card--art .category-card__inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: center;
+        padding: 62px 16px 216px;
+      }
+
+      .category-card--art .category-card__title {
+        max-width: 212px;
+      }
+
+      .category-card--art {
+        height: 438px;
+      }
+
+      .category-card--art .category-card__img--traffic {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 200px;
+        width: auto;
+        max-width: none;
+        bottom: -6px;
+      }
+
+      .category-card--revenue {
+        height: 438px;
+      }
+
+      .category-card--revenue .category-card__inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: center;
+        padding: 62px 16px 198px;
+      }
+
+      .category-card--revenue .category-card__title {
+        max-width: 212px;
+      }
+
+      .category-card--revenue .category-card__img--revenue {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        max-width: none;
       }
 
       .category-card__inner .space-y-1 > * + * {
@@ -3661,7 +3854,7 @@
         top: -24px;
         width: 228px;
         height: 228px;
-        background: url("./assets/static/bebroker-icon.svg") center / contain no-repeat;
+        background: url("/giveaway/assets/static/bebroker-icon.svg") center / contain no-repeat;
         opacity: 0.08;
         pointer-events: none;
       }
@@ -4680,9 +4873,15 @@
             </div>
           </div>
           <div class="categories-grid">
-            <a href="#" class="category-card category-card--sky">
+            <a href="#" class="category-card category-card--sky category-card--art">
               <div class="category-card__inner">
                 <h3 class="category-card__title">Already drives trading traffic</h3>
+                <img
+                  class="category-card__img category-card__img--traffic"
+                  src="/giveaway/assets/static/trading-traffic.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
               </div>
             </a>
             <a href="#" class="category-card category-card--pink">
@@ -4690,9 +4889,15 @@
                 <h3 class="category-card__title">Understands funnels & performance marketing</h3>
               </div>
             </a>
-            <a href="#" class="category-card category-card--grey">
+            <a href="#" class="category-card category-card--grey category-card--revenue">
               <div class="category-card__inner">
                 <h3 class="category-card__title">Wants higher revenue upside</h3>
+                <img
+                  class="category-card__img category-card__img--revenue"
+                  src="/giveaway/assets/static/revenue-upside.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
               </div>
             </a>
             <a href="#" class="category-card category-card--green">
@@ -4720,7 +4925,7 @@
                     <span class="ga-bento-avatar" style="--x-start:-24px;--x-mid:-18px;--x-end:-3px;--y-mid:118px;--s:0.88;animation-delay:-2.6s;"><img src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-3.png" alt=""></span>
                     <span class="ga-bento-avatar" style="--x-start:14px;--x-mid:10px;--x-end:6px;--y-mid:144px;--s:0.92;animation-delay:-3.5s;"><img src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-4.png" alt=""></span>
                     <span class="ga-bento-avatar" style="--x-start:-10px;--x-mid:-8px;--x-end:1px;--y-mid:96px;--s:1;animation-delay:-4.6s;"><img src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png" alt=""></span>
-                    <img class="ga-bento-users__logo" src="./assets/static/bebroker-icon.svg" alt="BeBroker icon">
+                    <img class="ga-bento-users__logo" src="/giveaway/assets/static/bebroker-icon.svg" alt="BeBroker icon">
                     <span class="ga-bento-chip" style="--x-start:-10px;--x-end:-84px;--y-end:336px;--s:0.98;animation-delay:-0.8s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New user</span>
                     <span class="ga-bento-chip" style="--x-start:4px;--x-end:4px;--y-end:304px;--s:1;animation-delay:-1.7s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New user</span>
                     <span class="ga-bento-chip" style="--x-start:-6px;--x-end:-62px;--y-end:272px;--s:1;animation-delay:-2.7s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New user</span>
@@ -5238,7 +5443,7 @@
                   <p>The platform setup is handled, so future owners can focus on marketing, traffic growth, and scaling revenue.</p>
                 </div>
 
-                <img class="reg-showcase__glyph" src="./assets/static/bebroker-icon.svg" alt="" aria-hidden="true" width="360" height="360" />
+                <img class="reg-showcase__glyph" src="/giveaway/assets/static/bebroker-icon.svg" alt="" aria-hidden="true" width="360" height="360" />
 
                 <div class="reg-note">
                   <h4>Serious affiliate partners only</h4>
@@ -5279,6 +5484,7 @@
       const modalResetButton = modal ? modal.querySelector('[data-modal-reset]') : null;
       const modalPasswordInput = document.getElementById('modal-password');
       const modalPasswordToggle = document.getElementById('modal-password-toggle');
+      const giveawayOffer = document.querySelector('.giveaway-offer');
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let previouslyFocused = null;
       let lastScrollY = window.scrollY;
@@ -5296,6 +5502,25 @@
       );
 
       elements.forEach((element) => observer.observe(element));
+
+      if (giveawayOffer) {
+        if (reduceMotion) {
+          giveawayOffer.classList.add('is-price-animated');
+        } else {
+          const offerObserver = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  giveawayOffer.classList.add('is-price-animated');
+                  offerObserver.disconnect();
+                }
+              });
+            },
+            { threshold: 0.35 }
+          );
+          offerObserver.observe(giveawayOffer);
+        }
+      }
 
       const heroFloating = document.querySelector('.hero__floating');
 
