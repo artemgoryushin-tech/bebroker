@@ -1929,7 +1929,7 @@ section {
 .modal.is-open {
 	display: grid;
 	align-items: center;
-	justify-content: center;
+	justify-items: center;
 	padding: 0 12px;
 }
 
