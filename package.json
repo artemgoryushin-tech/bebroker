@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "engines": {
-    "node": "^22.20"
+    "node": "^24.7"
   },
   "devDependencies": {
     "browserslist": "^4.28.1",
