@@ -45,6 +45,7 @@
 
 * {
 	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -664,15 +665,15 @@ section {
 
 .bento-card__icons {
 	display: flex;
-	gap: 8px;
+	gap: 12px;
 	margin-top: 14px;
 	padding-top: 12px;
 	border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .bento-card__icons img {
-	width: 28px;
-	height: 28px;
+	width: 46px;
+	height: 46px;
 	border-radius: 6px;
 	background: rgba(255, 255, 255, 0.06);
 	padding: 4px;
@@ -1059,7 +1060,6 @@ section {
 	max-width: none;
 	display: block;
 	border-radius: 8px 0 0 0;
-	box-shadow: -4px -4px 20px rgba(0, 0, 0, 0.08);
 	transform: perspective(800px) rotateY(-2deg) translateX(8%);
 	transform-origin: right center;
 	transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
@@ -2295,6 +2295,10 @@ body.modal-open {
 
 	.step:nth-child(2n)::after {
 		display: none;
+	}
+
+	.feat-bento__phone {
+		align-items: flex-start;
 	}
 }
 
