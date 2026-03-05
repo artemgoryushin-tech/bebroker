@@ -190,9 +190,18 @@ document.addEventListener("keydown", (event: KeyboardEvent) => {
 	}
 });
 
+// utm
+const utm: Record<string, string> = {};
+
+utm.lang_by_browser = window.navigator.language || "en";
+utm.lang = localStorage.getItem("form__lang") || "en";
+
+const url = new URL(window.location.href);
+utm.landing_url = utm.referrer = url.host + url.pathname;
+
 // Form Submissions
 if (modalForm && modalFormWrap) {
-	const messageBtn = modalFormWrap.querySelector<HTMLButtonElement>("[data-message-btn]");
+	const messageBtns = modalFormWrap.querySelectorAll<HTMLButtonElement>("[data-message-btn]");
 	const closeBtn = [
 		modalFormWrap.parentNode?.querySelector<HTMLButtonElement>("[data-close-modal]"),
 		modalFormWrap
@@ -223,7 +232,7 @@ if (modalForm && modalFormWrap) {
 	modalForm.addEventListener("submit", async (event: SubmitEvent) => {
 		wrapClassNameMod.loading(true);
 		disableManager.disable();
-		await submitForm(event, formCallback);
+		await submitForm(event, formCallback, utm);
 	});
 
 	closeBtn.forEach((btn) => {
@@ -232,13 +241,13 @@ if (modalForm && modalFormWrap) {
 		});
 	});
 
-	if (messageBtn) {
-		messageBtn.addEventListener("click", () => {
+	messageBtns.forEach((btn) => {
+		btn.addEventListener("click", () => {
 			wrapClassNameMod.removeAll();
 			disableManager.enable();
 			removeValidationInputErrors(modalForm);
 		});
-	}
+	});
 }
 
 if (conversionForm) {
@@ -266,7 +275,7 @@ if (conversionForm) {
 	conversionForm.addEventListener("submit", async (event: SubmitEvent) => {
 		formClassNameMod.loading(true);
 		disableManager.disable();
-		await submitForm(event, formCallback);
+		await submitForm(event, formCallback, utm);
 	});
 
 	messageBtn.forEach((btn) => {

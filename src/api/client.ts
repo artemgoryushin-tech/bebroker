@@ -1,6 +1,7 @@
 async function handleResponse<T>(response: Response): Promise<T> {
-	if (response.ok) return response.json();
-	if (response.status === 422) return response.json();
+	if (response.ok || response.status === 422) {
+		return response.json();
+	}
 
 	const message = await response.text();
 	throw new Error(message);

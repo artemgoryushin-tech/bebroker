@@ -61,12 +61,19 @@ export interface SubmitFormCallback {
 	finally?: () => void;
 }
 
-export async function submitForm(event: SubmitEvent, callback: SubmitFormCallback = {}): Promise<void> {
+export async function submitForm(
+	event: SubmitEvent,
+	callback: SubmitFormCallback = {},
+	addData: Record<string, string> = {},
+): Promise<void> {
 	event.preventDefault();
 	const form = event.target as HTMLFormElement;
 
 	try {
 		const formData = new FormData(form);
+		Object.entries(addData).forEach(([key, value]) => {
+			formData.append(key, value);
+		});
 		const data = Object.fromEntries(formData.entries());
 		const response = await formService.submit(data);
 
