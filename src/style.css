@@ -674,9 +674,6 @@ section {
 .bento-card__icons img {
 	width: 46px;
 	height: 46px;
-	border-radius: 6px;
-	background: rgba(255, 255, 255, 0.06);
-	padding: 4px;
 }
 
 .bento-card__arrow {
