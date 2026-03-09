@@ -356,6 +356,7 @@ section {
 .hero__floating {
 	position: absolute;
 	inset: 0;
+    top: 57px;
 	z-index: 1;
 	pointer-events: none;
 }
@@ -2624,7 +2625,7 @@ body.modal-open {
 
 	.hero {
 		min-height: 480px;
-		padding: 88px 0 48px;
+		padding: 138px 0 48px;
 	}
 
 	.hero h1 {
