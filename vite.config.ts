@@ -32,12 +32,14 @@ function i18nPages(): Plugin {
   const applyTranslations = (
     html: string,
     translations: Record<string, string> | undefined,
+    fallbackLang: string,
   ) => {
-    if (!translations) return html;
+    if (!translations) return html.replaceAll("{{lang}}", fallbackLang);
     let result = html;
-    for (const key in translations) {
-      if (Object.prototype.hasOwnProperty.call(translations, key)) {
-        result = result.replaceAll(`{{${key}}}`, String(translations[key]));
+    const mergedTranslations = { lang: fallbackLang, ...translations };
+    for (const key in mergedTranslations) {
+      if (Object.prototype.hasOwnProperty.call(mergedTranslations, key)) {
+        result = result.replaceAll(`{{${key}}}`, String(mergedTranslations[key]));
       }
     }
     return result;
@@ -83,11 +85,17 @@ function i18nPages(): Plugin {
     },
 
     transformIndexHtml(html, ctx) {
+      // Only translate on the dev server.
+      // During build we keep placeholders and render each locale in closeBundle().
+      if (!(ctx as { server?: unknown }).server) {
+        return html;
+      }
+
       const url = (ctx as any).originalUrl || (ctx as any).path || "/";
       const lang = resolveLangFromUrl(url);
       const locales = loadLocales();
       const translations = locales[lang] || locales[defaultLang];
-      return applyTranslations(html, translations);
+      return applyTranslations(html, translations, lang);
     },
 
     closeBundle() {
@@ -101,7 +109,7 @@ function i18nPages(): Plugin {
       const locales = loadLocales();
 
       for (const [lang, translations] of Object.entries(locales)) {
-        const result = applyTranslations(baseHtml, translations);
+        const result = applyTranslations(baseHtml, translations, lang);
         const isDefaultLang = lang === defaultLang;
         const targets = isDefaultLang
           ? [path.join(outDir, "index.html"), path.join(outDir, lang, "index.html")]

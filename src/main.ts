@@ -195,7 +195,7 @@ const utm: Record<string, string> = {};
 
 utm.lang_by_browser = window.navigator.language || "en";
 const currentLang = document.documentElement.lang;
-utm.lang = localStorage.getItem("form__lang") || currentLang || "en";
+utm.lang = currentLang || window.navigator.language || "";
 
 const url = new URL(window.location.href);
 utm.landing_url = utm.referrer = url.host + url.pathname;
