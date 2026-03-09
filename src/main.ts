@@ -193,9 +193,23 @@ document.addEventListener("keydown", (event: KeyboardEvent) => {
 // utm
 const utm: Record<string, string> = {};
 
+// Collect&Store Marketing attribution
+const list = ['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'];
+const urlParams = new URLSearchParams(window.location.search);
+const entries = urlParams.entries();
+for (const entry of entries) {
+    localStorage.setItem('param__' + entry[0], entry[1]);
+}
+for (const key of list) {
+    const value = localStorage.getItem('param__' + key);
+    if (value !== null) {
+        utm[key] = value;
+    }
+}
+
 utm.lang_by_browser = window.navigator.language || "en";
 const currentLang = document.documentElement.lang;
-utm.lang = currentLang || window.navigator.language || "";
+utm.lang = currentLang || window.navigator.language;
 
 const url = new URL(window.location.href);
 utm.landing_url = utm.referrer = url.host + url.pathname;
