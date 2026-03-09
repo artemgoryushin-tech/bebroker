@@ -38,6 +38,20 @@ const observer = new IntersectionObserver(
 
 elements.forEach((element) => observer.observe(element));
 
+const currentLang = document.documentElement.lang;
+const isFirstLoad = localStorage.getItem('isLoaded') === null;
+if (window.navigator.language && isFirstLoad) {
+    const fullLanguageCode = navigator.language; // e.g., "en-US", "fr-FR", "es"
+    const iso2Code = fullLanguageCode.slice(0, 2);
+
+    const langs = ['en', 'es', 'id', 'ms', 'pt', 'th', 'tl'];
+
+    if (langs.indexOf(iso2Code) !== -1 && currentLang === 'en') {
+        window.location.href = `/${iso2Code}`;
+    }
+    localStorage.setItem('isLoaded', 'true');
+}
+
 const updateTopbar = (): void => {
 	if (topbar) {
 		topbar.classList.toggle("is-scrolled", window.scrollY > 16);
@@ -208,7 +222,6 @@ for (const key of list) {
 }
 
 utm.lang_by_browser = window.navigator.language || "en";
-const currentLang = document.documentElement.lang;
 utm.lang = currentLang || window.navigator.language;
 
 const url = new URL(window.location.href);
