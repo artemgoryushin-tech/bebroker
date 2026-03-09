@@ -194,7 +194,8 @@ document.addEventListener("keydown", (event: KeyboardEvent) => {
 const utm: Record<string, string> = {};
 
 utm.lang_by_browser = window.navigator.language || "en";
-utm.lang = localStorage.getItem("form__lang") || "en";
+const currentLang = document.documentElement.lang;
+utm.lang = localStorage.getItem("form__lang") || currentLang || "en";
 
 const url = new URL(window.location.href);
 utm.landing_url = utm.referrer = url.host + url.pathname;
