@@ -359,6 +359,18 @@ section {
     top: 57px;
 	z-index: 1;
 	pointer-events: none;
+
+    @media (max-width: 1080px) {
+        top: -50px;
+    }
+
+    @media (max-width: 760px) {
+        top: 45px;
+    }
+
+    @media (max-width: 680px) {
+        top: 57px;
+    }
 }
 
 .hero__tile {
