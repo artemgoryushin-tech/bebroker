@@ -65,7 +65,7 @@ function i18nPages(): Plugin {
     name: "i18n-pages",
 
     configResolved(config) {
-      rootDir = config.root;
+      rootDir = config.root + '/src';
       outDir = path.resolve(config.root, config.build.outDir || "dist");
       localesDir = path.resolve(config.root, "locales");
     },
@@ -128,7 +128,9 @@ function i18nPages(): Plugin {
 }
 
 export default defineConfig({
+	root: path.resolve(process.cwd(), "src"),
 	base: "",
+	publicDir: path.resolve(process.cwd(), "public"),
 	server: {
 		port: 3000,
 		open: false,
@@ -141,6 +143,7 @@ export default defineConfig({
 	},
     plugins: [i18nPages()],
 	build: {
+		outDir: path.resolve(process.cwd(), "dist"),
 		cssMinify: "lightningcss",
 	},
 });
