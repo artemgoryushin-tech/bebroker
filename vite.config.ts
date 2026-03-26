@@ -65,7 +65,7 @@ function i18nPages(): Plugin {
     name: "i18n-pages",
 
     configResolved(config) {
-      rootDir = config.root + '/src';
+			rootDir = config.root;
       outDir = path.resolve(config.root, config.build.outDir || "dist");
       localesDir = path.resolve(config.root, "locales");
     },
@@ -73,11 +73,29 @@ function i18nPages(): Plugin {
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
         const url = req.url || "/";
-        const match = url.match(/^\/([a-z]{2})(\/|$)/i);
+				const match = url.match(/^\/([a-z]{2})(\/|$)/i);
 
         if (match) {
           const lang = match[1].toLowerCase();
-          req.url = `/index.html?__lang=${lang}`;
+
+					const [pathname, search = ""] = url.split("?");
+					const rest = pathname.slice(match[0].length).replace(/^\/+/, "");
+
+					// Only rewrite "known" pages; otherwise leave static assets alone.
+					let htmlPath: string | null = null;
+					if (!rest || rest === "index.html") {
+						htmlPath = "/index.html";
+					} else if (rest.startsWith("giveaway")) {
+						htmlPath = "/giveaway/index.html";
+					} else if (rest.startsWith("privacy-policy")) {
+						htmlPath = "/privacy-policy/index.html";
+					} else if (rest.startsWith("terms-and-conditions")) {
+						htmlPath = "/terms-and-conditions/index.html";
+					}
+
+					if (htmlPath) {
+						req.url = `${htmlPath}?__lang=${lang}${search ? `&${search}` : ""}`;
+					}
         }
 
         next();
@@ -95,34 +113,85 @@ function i18nPages(): Plugin {
       const lang = resolveLangFromUrl(url);
       const locales = loadLocales();
       const translations = locales[lang] || locales[defaultLang];
-      return applyTranslations(html, translations, lang);
+      let result = applyTranslations(html, translations, lang);
+
+      // Dev mode serves the same HTML file, but the browser URL includes the locale prefix
+      // (e.g. `/es/giveaway/`). Relative `./assets/...` / `../assets/...` therefore resolve
+      // incorrectly for nested URLs. Make asset URLs absolute for giveaway pages.
+      const pathname = String(url).split("?")[0];
+      const isGiveawayRoute =
+        /^\/[a-z]{2}\/giveaway(?:\/|$)/i.test(pathname) ||
+        /^\/giveaway(?:\/|$)/i.test(pathname);
+
+      if (isGiveawayRoute) {
+        result = result
+          .replace(/(?:\.\.\/)+assets\//g, "/assets/")
+          .replace(/\.\/assets\//g, "/assets/");
+      }
+
+      return result;
     },
 
-    closeBundle() {
-      const indexPath = path.join(outDir, "index.html");
+		closeBundle() {
+			if (!fs.existsSync(localesDir)) return;
 
-      if (!fs.existsSync(indexPath) || !fs.existsSync(localesDir)) {
-        return;
-      }
+			// Pages that should get language folders (home + giveaway).
+			const translatablePages = ["index.html", path.join("giveaway", "index.html")];
 
-      const baseHtml = fs.readFileSync(indexPath, "utf-8");
-      const locales = loadLocales();
+			const locales = loadLocales();
 
-      for (const [lang, translations] of Object.entries(locales)) {
-        const result = applyTranslations(baseHtml, translations, lang);
-        const isDefaultLang = lang === defaultLang;
-        const targets = isDefaultLang
-          ? [path.join(outDir, "index.html"), path.join(outDir, lang, "index.html")]
-          : [path.join(outDir, lang, "index.html")];
+			for (const pageRelPath of translatablePages) {
+				const basePath = path.join(outDir, pageRelPath);
+				if (!fs.existsSync(basePath)) continue;
 
-        for (const target of targets) {
-          const dir = path.dirname(target);
-          if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-          }
-          fs.writeFileSync(target, result, "utf-8");
-        }
-      }
+				const baseHtml = fs.readFileSync(basePath, "utf-8");
+				const baseDir = path.dirname(pageRelPath);
+				const baseDirDepth = baseDir === "."
+					? 0
+					: baseDir.split(path.sep).filter(Boolean).length;
+
+				for (const [lang, translations] of Object.entries(locales)) {
+					const result = applyTranslations(baseHtml, translations, lang);
+					const isDefaultLang = lang === defaultLang;
+
+					const localeTargetPath = path.join(outDir, lang, pageRelPath);
+					const targets = isDefaultLang
+						? [path.join(outDir, pageRelPath), localeTargetPath]
+						: [localeTargetPath];
+
+					for (const target of targets) {
+						// The base HTML was built at `dist/<pageRelPath>`.
+						// When we write to `dist/<lang>/<pageRelPath>`, the HTML moves one directory deeper,
+						// so relative asset URLs like `../assets/...` need one extra `../`.
+						const targetRelPath = path.relative(outDir, target);
+						const targetDir = path.dirname(targetRelPath);
+						const targetDirDepth = targetDir === "."
+							? 0
+							: targetDir.split(path.sep).filter(Boolean).length;
+						const assetShift = targetDirDepth - baseDirDepth;
+
+						let finalHtml = result;
+						if (assetShift > 0) {
+							const prefix = "../".repeat(assetShift);
+							finalHtml = finalHtml.replace(
+								/((?:\.\.\/)+assets\/)/g,
+								prefix + "$1",
+							);
+						}
+
+						// Make asset URLs independent of the current nesting level.
+						// Example: `./assets/...` works for `/giveaway/` but breaks for `/es/giveaway/`.
+						// By rewriting to absolute `/assets/...`, all locales resolve correctly.
+						finalHtml = finalHtml
+							.replace(/(?:\.\.\/)+assets\//g, "/assets/")
+							.replace(/\.\/assets\//g, "/assets/");
+
+						const dir = path.dirname(target);
+						if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+						fs.writeFileSync(target, finalHtml, "utf-8");
+					}
+				}
+			}
     },
   };
 }
@@ -143,7 +212,16 @@ export default defineConfig({
 	},
     plugins: [i18nPages()],
 	build: {
+		emptyOutDir: true,
 		outDir: path.resolve(process.cwd(), "dist"),
 		cssMinify: "lightningcss",
+		rollupOptions: {
+			input: {
+				index: path.resolve(process.cwd(), "src/index.html"),
+				giveaway: path.resolve(process.cwd(), "src/giveaway/index.html"),
+				privacy: path.resolve(process.cwd(), "src/privacy-policy/index.html"),
+				terms: path.resolve(process.cwd(), "src/terms-and-conditions/index.html"),
+			},
+		},
 	},
 });
