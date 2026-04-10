@@ -30,6 +30,18 @@
   <meta name="twitter:title" content="{{seo_twitter_title}}" />
   <meta name="twitter:description" content="{{seo_twitter_description}}" />
   <meta name="twitter:image" content="%VITE_BASE_URL%/assets/static/og-image.png" />
+
+  <!-- Roistat Counter Start -->
+  <script defer>
+    (function(w, d, s, h, id) {
+      w.roistatProjectId = id; w.roistatHost = h;
+      var p = d.location.protocol == "https:" ? "https://" : "http://";
+      var u = /^.*roistat_visit=[^;]+(.*)?$/.test(d.cookie) ? "/dist/module.js" : "/api/site/1.0/"+id+"/init?referrer="+encodeURIComponent(d.location.href);
+      var js = d.createElement(s); js.charset="UTF-8"; js.async = 1; js.src = p+h+u; var js2 = d.getElementsByTagName(s)[0]; js2.parentNode.insertBefore(js, js2);
+    })(window, document, 'script', 'cloud.roistat.com', '1ec74ef9b67f65e8aaec7eb4ac4d541a');
+  </script>
+  <!-- Roistat Counter End -->
+
 </head>
 
 <body>
