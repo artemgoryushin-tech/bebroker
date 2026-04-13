@@ -5790,7 +5790,7 @@
         }
       })();
 
-      /* {{giveaway_giveaway}} countdown (targets next April 30) */
+      /* {{giveaway_giveaway}} countdown (targets next May 31) */
       (function() {
         const el = document.getElementById('giveawayCountdown');
         if (!el) return;
@@ -5798,11 +5798,8 @@
         function getTargetDate() {
           const now = new Date();
           let year = now.getFullYear();
-          let target = new Date(year, 3, 30, 23, 59, 59); // April is month index 3
-          if (target <= now) {
-            year += 1;
-            target = new Date(year, 3, 30, 23, 59, 59);
-          }
+          let target = new Date(year, 4, 31, 23, 59, 59);
+          if (target <= now) target = new Date(year + 1, 4, 31, 23, 59, 59);
           return target;
         }
 
@@ -5901,8 +5898,8 @@
         function getTargetDate() {
           const now = new Date();
           let year = now.getFullYear();
-          let target = new Date(year, 3, 30, 23, 59, 59);
-          if (target <= now) target = new Date(year + 1, 3, 30, 23, 59, 59);
+          let target = new Date(year, 4, 31, 23, 59, 59);
+          if (target <= now) target = new Date(year + 1, 4, 31, 23, 59, 59);
           return target;
         }
 
