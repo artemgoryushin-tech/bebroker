@@ -4,6 +4,71 @@ import fs from "fs";
 import path from "path";
 import { browserslistToTargets } from "lightningcss";
 
+function copyStaticLandingPages(staticDirs: string[]): Plugin {
+  const workspaceRoot = process.cwd();
+  let outDir = path.resolve(workspaceRoot, "dist");
+
+  const resolveStaticFile = (pathname: string) => {
+    for (const dir of staticDirs) {
+      if (pathname !== `/${dir}` && !pathname.startsWith(`/${dir}/`)) {
+        continue;
+      }
+
+      const normalizedPath = pathname.endsWith("/") && pathname.length > 1
+        ? pathname.slice(0, -1)
+        : pathname;
+      const relativePath = normalizedPath.slice(1);
+      const candidate = path.extname(normalizedPath)
+        ? path.resolve(workspaceRoot, relativePath)
+        : path.resolve(workspaceRoot, relativePath, "index.html");
+
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    }
+
+    return null;
+  };
+
+  return {
+    name: "copy-static-landing-pages",
+
+    configResolved(config) {
+      outDir = path.resolve(workspaceRoot, config.build.outDir || "dist");
+    },
+
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const rawUrl = req.url || "/";
+        const [pathname, search = ""] = rawUrl.split("?");
+        const candidate = resolveStaticFile(pathname);
+
+        if (candidate) {
+          req.url = `/@fs${candidate}${search ? `?${search}` : ""}`;
+        }
+
+        next();
+      });
+    },
+
+    closeBundle() {
+      for (const dir of staticDirs) {
+        const sourceDir = path.resolve(workspaceRoot, dir);
+        const targetDir = path.resolve(outDir, dir);
+
+        if (!fs.existsSync(sourceDir)) {
+          continue;
+        }
+
+        fs.cpSync(sourceDir, targetDir, {
+          recursive: true,
+          force: true,
+        });
+      }
+    },
+  };
+}
+
 function i18nPages(): Plugin {
   const defaultLang = "en";
   let rootDir = process.cwd();
@@ -65,7 +130,7 @@ function i18nPages(): Plugin {
     name: "i18n-pages",
 
     configResolved(config) {
-			rootDir = config.root;
+      rootDir = config.root;
       outDir = path.resolve(config.root, config.build.outDir || "dist");
       localesDir = path.resolve(config.root, "locales");
     },
@@ -73,29 +138,28 @@ function i18nPages(): Plugin {
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
         const url = req.url || "/";
-				const match = url.match(/^\/([a-z]{2})(\/|$)/i);
+        const match = url.match(/^\/([a-z]{2})(\/|$)/i);
 
         if (match) {
           const lang = match[1].toLowerCase();
 
-					const [pathname, search = ""] = url.split("?");
-					const rest = pathname.slice(match[0].length).replace(/^\/+/, "");
+          const [pathname, search = ""] = url.split("?");
+          const rest = pathname.slice(match[0].length).replace(/^\/+/, "");
 
-					// Only rewrite "known" pages; otherwise leave static assets alone.
-					let htmlPath: string | null = null;
-					if (!rest || rest === "index.html") {
-						htmlPath = "/index.html";
-					} else if (rest.startsWith("giveaway")) {
-						htmlPath = "/giveaway/index.html";
-					} else if (rest.startsWith("privacy-policy")) {
-						htmlPath = "/privacy-policy/index.html";
-					} else if (rest.startsWith("terms-and-conditions")) {
-						htmlPath = "/terms-and-conditions/index.html";
-					}
+          let htmlPath: string | null = null;
+          if (!rest || rest === "index.html") {
+            htmlPath = "/index.html";
+          } else if (rest.startsWith("giveaway")) {
+            htmlPath = "/giveaway/index.html";
+          } else if (rest.startsWith("privacy-policy")) {
+            htmlPath = "/privacy-policy/index.html";
+          } else if (rest.startsWith("terms-and-conditions")) {
+            htmlPath = "/terms-and-conditions/index.html";
+          }
 
-					if (htmlPath) {
-						req.url = `${htmlPath}?__lang=${lang}${search ? `&${search}` : ""}`;
-					}
+          if (htmlPath) {
+            req.url = `${htmlPath}?__lang=${lang}${search ? `&${search}` : ""}`;
+          }
         }
 
         next();
@@ -103,8 +167,6 @@ function i18nPages(): Plugin {
     },
 
     transformIndexHtml(html, ctx) {
-      // Only translate on the dev server.
-      // During build we keep placeholders and render each locale in closeBundle().
       if (!(ctx as { server?: unknown }).server) {
         return html;
       }
@@ -115,9 +177,6 @@ function i18nPages(): Plugin {
       const translations = locales[lang] || locales[defaultLang];
       let result = applyTranslations(html, translations, lang);
 
-      // Dev mode serves the same HTML file, but the browser URL includes the locale prefix
-      // (e.g. `/es/giveaway/`). Relative `./assets/...` / `../assets/...` therefore resolve
-      // incorrectly for nested URLs. Make asset URLs absolute for giveaway pages.
       const pathname = String(url).split("?")[0];
       const isGiveawayRoute =
         /^\/[a-z]{2}\/giveaway(?:\/|$)/i.test(pathname) ||
@@ -132,96 +191,88 @@ function i18nPages(): Plugin {
       return result;
     },
 
-		closeBundle() {
-			if (!fs.existsSync(localesDir)) return;
+    closeBundle() {
+      if (!fs.existsSync(localesDir)) return;
 
-			// Pages that should get language folders (home + giveaway).
-			const translatablePages = ["index.html", path.join("giveaway", "index.html")];
+      const translatablePages = ["index.html", path.join("giveaway", "index.html")];
+      const locales = loadLocales();
 
-			const locales = loadLocales();
+      for (const pageRelPath of translatablePages) {
+        const basePath = path.join(outDir, pageRelPath);
+        if (!fs.existsSync(basePath)) continue;
 
-			for (const pageRelPath of translatablePages) {
-				const basePath = path.join(outDir, pageRelPath);
-				if (!fs.existsSync(basePath)) continue;
+        const baseHtml = fs.readFileSync(basePath, "utf-8");
+        const baseDir = path.dirname(pageRelPath);
+        const baseDirDepth = baseDir === "."
+          ? 0
+          : baseDir.split(path.sep).filter(Boolean).length;
 
-				const baseHtml = fs.readFileSync(basePath, "utf-8");
-				const baseDir = path.dirname(pageRelPath);
-				const baseDirDepth = baseDir === "."
-					? 0
-					: baseDir.split(path.sep).filter(Boolean).length;
+        for (const [lang, translations] of Object.entries(locales)) {
+          const result = applyTranslations(baseHtml, translations, lang);
+          const isDefaultLang = lang === defaultLang;
 
-				for (const [lang, translations] of Object.entries(locales)) {
-					const result = applyTranslations(baseHtml, translations, lang);
-					const isDefaultLang = lang === defaultLang;
+          const localeTargetPath = path.join(outDir, lang, pageRelPath);
+          const targets = isDefaultLang
+            ? [path.join(outDir, pageRelPath), localeTargetPath]
+            : [localeTargetPath];
 
-					const localeTargetPath = path.join(outDir, lang, pageRelPath);
-					const targets = isDefaultLang
-						? [path.join(outDir, pageRelPath), localeTargetPath]
-						: [localeTargetPath];
+          for (const target of targets) {
+            const targetRelPath = path.relative(outDir, target);
+            const targetDir = path.dirname(targetRelPath);
+            const targetDirDepth = targetDir === "."
+              ? 0
+              : targetDir.split(path.sep).filter(Boolean).length;
+            const assetShift = targetDirDepth - baseDirDepth;
 
-					for (const target of targets) {
-						// The base HTML was built at `dist/<pageRelPath>`.
-						// When we write to `dist/<lang>/<pageRelPath>`, the HTML moves one directory deeper,
-						// so relative asset URLs like `../assets/...` need one extra `../`.
-						const targetRelPath = path.relative(outDir, target);
-						const targetDir = path.dirname(targetRelPath);
-						const targetDirDepth = targetDir === "."
-							? 0
-							: targetDir.split(path.sep).filter(Boolean).length;
-						const assetShift = targetDirDepth - baseDirDepth;
+            let finalHtml = result;
+            if (assetShift > 0) {
+              const prefix = "../".repeat(assetShift);
+              finalHtml = finalHtml.replace(
+                /((?:\.\.\/)+assets\/)/g,
+                prefix + "$1",
+              );
+            }
 
-						let finalHtml = result;
-						if (assetShift > 0) {
-							const prefix = "../".repeat(assetShift);
-							finalHtml = finalHtml.replace(
-								/((?:\.\.\/)+assets\/)/g,
-								prefix + "$1",
-							);
-						}
+            finalHtml = finalHtml
+              .replace(/(?:\.\.\/)+assets\//g, "/assets/")
+              .replace(/\.\/assets\//g, "/assets/");
 
-						// Make asset URLs independent of the current nesting level.
-						// Example: `./assets/...` works for `/giveaway/` but breaks for `/es/giveaway/`.
-						// By rewriting to absolute `/assets/...`, all locales resolve correctly.
-						finalHtml = finalHtml
-							.replace(/(?:\.\.\/)+assets\//g, "/assets/")
-							.replace(/\.\/assets\//g, "/assets/");
-
-						const dir = path.dirname(target);
-						if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-						fs.writeFileSync(target, finalHtml, "utf-8");
-					}
-				}
-			}
+            const dir = path.dirname(target);
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            fs.writeFileSync(target, finalHtml, "utf-8");
+          }
+        }
+      }
     },
   };
 }
 
 export default defineConfig({
-	root: path.resolve(process.cwd(), "src"),
-	base: "",
-	publicDir: path.resolve(process.cwd(), "public"),
-	server: {
-		port: 3000,
-		open: false,
-	},
-	css: {
-		transformer: "lightningcss",
-		lightningcss: {
-			targets: browserslistToTargets(browserslist(">= 0.25%")),
-		},
-	},
-    plugins: [i18nPages()],
-	build: {
-		emptyOutDir: true,
-		outDir: path.resolve(process.cwd(), "dist"),
-		cssMinify: "lightningcss",
-		rollupOptions: {
-			input: {
-				index: path.resolve(process.cwd(), "src/index.html"),
-				giveaway: path.resolve(process.cwd(), "src/giveaway/index.html"),
-				privacy: path.resolve(process.cwd(), "src/privacy-policy/index.html"),
-				terms: path.resolve(process.cwd(), "src/terms-and-conditions/index.html"),
-			},
-		},
-	},
+  root: path.resolve(process.cwd(), "src"),
+  base: "",
+  publicDir: path.resolve(process.cwd(), "public"),
+  server: {
+    port: 3000,
+    open: false,
+  },
+  css: {
+    transformer: "lightningcss",
+    lightningcss: {
+      targets: browserslistToTargets(browserslist(">= 0.25%")),
+    },
+  },
+  plugins: [i18nPages(), copyStaticLandingPages(["giveaway", "resell"])],
+  build: {
+    emptyOutDir: true,
+    outDir: path.resolve(process.cwd(), "dist"),
+    cssMinify: "lightningcss",
+    rollupOptions: {
+      input: {
+        index: path.resolve(process.cwd(), "src/index.html"),
+        giveaway: path.resolve(process.cwd(), "src/giveaway/index.html"),
+        privacy: path.resolve(process.cwd(), "src/privacy-policy/index.html"),
+        terms: path.resolve(process.cwd(), "src/terms-and-conditions/index.html"),
+      },
+    },
+  },
 });
