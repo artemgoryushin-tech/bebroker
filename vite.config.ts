@@ -4,6 +4,65 @@ import fs from "fs";
 import path from "path";
 import { browserslistToTargets } from "lightningcss";
 
+function copyStaticLandingPages(staticDirs: string[]): Plugin {
+  let rootDir = process.cwd();
+  let outDir = path.resolve(rootDir, "dist");
+
+  return {
+    name: "copy-static-landing-pages",
+
+    configResolved(config) {
+      rootDir = config.root;
+      outDir = path.resolve(config.root, config.build.outDir || "dist");
+    },
+
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const rawUrl = req.url || "/";
+        const [pathname, search = ""] = rawUrl.split("?");
+
+        if (!pathname || path.extname(pathname)) {
+          next();
+          return;
+        }
+
+        for (const dir of staticDirs) {
+          if (pathname !== `/${dir}` && !pathname.startsWith(`/${dir}/`)) {
+            continue;
+          }
+
+          const normalizedPath = pathname.endsWith("/") && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+          const candidate = path.resolve(rootDir, normalizedPath.slice(1), "index.html");
+
+          if (fs.existsSync(candidate)) {
+            req.url = `${normalizedPath}/index.html${search ? `?${search}` : ""}`;
+          }
+
+          break;
+        }
+
+        next();
+      });
+    },
+
+    closeBundle() {
+      for (const dir of staticDirs) {
+        const sourceDir = path.resolve(rootDir, dir);
+        const targetDir = path.resolve(outDir, dir);
+
+        if (!fs.existsSync(sourceDir)) {
+          continue;
+        }
+
+        fs.cpSync(sourceDir, targetDir, {
+          recursive: true,
+          force: true,
+        });
+      }
+    },
+  };
+}
+
 function i18nPages(): Plugin {
   const defaultLang = "en";
   let rootDir = process.cwd();
@@ -44,6 +103,11 @@ function i18nPages(): Plugin {
     }
     return result;
   };
+
+  const rewriteLocalizedAssetPaths = (html: string) =>
+    html
+      .replaceAll('href="./assets/', 'href="../assets/')
+      .replaceAll('src="./assets/', 'src="../assets/');
 
   const resolveLangFromUrl = (url: string | undefined): string => {
     if (!url) return defaultLang;
@@ -109,7 +173,7 @@ function i18nPages(): Plugin {
       const locales = loadLocales();
 
       for (const [lang, translations] of Object.entries(locales)) {
-        const result = applyTranslations(baseHtml, translations, lang);
+        const translatedHtml = applyTranslations(baseHtml, translations, lang);
         const isDefaultLang = lang === defaultLang;
         const targets = isDefaultLang
           ? [path.join(outDir, "index.html"), path.join(outDir, lang, "index.html")]
@@ -120,7 +184,12 @@ function i18nPages(): Plugin {
           if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
           }
-          fs.writeFileSync(target, result, "utf-8");
+
+          const html = target === path.join(outDir, "index.html")
+            ? translatedHtml
+            : rewriteLocalizedAssetPaths(translatedHtml);
+
+          fs.writeFileSync(target, html, "utf-8");
         }
       }
     },
@@ -139,7 +208,7 @@ export default defineConfig({
 			targets: browserslistToTargets(browserslist(">= 0.25%")),
 		},
 	},
-    plugins: [i18nPages()],
+    plugins: [i18nPages(), copyStaticLandingPages(["giveaway", "resell"])],
 	build: {
 		cssMinify: "lightningcss",
 	},
