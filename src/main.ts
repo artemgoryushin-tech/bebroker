@@ -6,6 +6,7 @@ import {
 	submitForm,
 	type SubmitFormCallback,
 } from "./api/submitForm";
+import { trackLeadSubmit } from "./analytics";
 
 // Типизация DOM-элементов с использованием Generic-типов
 const elements = document.querySelectorAll<HTMLElement>(".reveal");
@@ -251,6 +252,7 @@ if (modalForm && modalFormWrap) {
 			wrapClassNameMod.success(true);
 			modalForm.reset();
 			disableManager.enable();
+			trackLeadSubmit("modal-form", { utm_source: utm.utm_source, utm_campaign: utm.utm_campaign });
 		},
 		error() {
 			wrapClassNameMod.error(true);
@@ -294,6 +296,7 @@ if (conversionForm) {
 		success() {
 			formClassNameMod.success(true);
 			conversionForm.reset();
+			trackLeadSubmit("conversion-form", { utm_source: utm.utm_source, utm_campaign: utm.utm_campaign });
 		},
 		error() {
 			formClassNameMod.error(true);
