@@ -7,6 +7,7 @@ import {
 	type SubmitFormCallback,
 } from "./api/submitForm";
 import { trackLeadSubmit } from "./analytics";
+import {getCookieByName} from "./utils/cookie.ts";
 
 // Типизация DOM-элементов с использованием Generic-типов
 const elements = document.querySelectorAll<HTMLElement>(".reveal");
@@ -227,6 +228,9 @@ utm.lang = currentLang || window.navigator.language;
 
 const url = new URL(window.location.href);
 utm.landing_url = utm.referrer = url.host + url.pathname;
+
+const roistatId = getCookieByName('roistat_visit', document.cookie);
+if (roistatId) utm.roistat_id = roistatId;
 
 // Form Submissions
 if (modalForm && modalFormWrap) {
