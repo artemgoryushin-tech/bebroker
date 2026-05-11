@@ -294,5 +294,7 @@
   "giveaway_yes_there_is_no_fee_to_apply_for_the_giv": "Sim. Não há taxa para se inscrever no sorteio.",
   "giveaway_your_giveaway_application_is_in": "Sua inscrição no sorteio foi enviada",
   "giveaway_your_traffic": "Seu tráfego",
-  "giveaway_head_meta_description": "Sorteio BeBroker. Ganhe uma plataforma de corretagem leve pronta para operar, com setup premium simplificado, lançamento rápido e infraestrutura flexível para crescer."
+  "giveaway_head_meta_description": "Sorteio BeBroker. Ganhe uma plataforma de corretagem leve pronta para operar, com setup premium simplificado, lançamento rápido e infraestrutura flexível para crescer.",
+  "resell_canonical_url": "https://bebroker.io/pt/resell/",
+  "resell_og_image": "https://bebroker.io/resell/assets/static/og-image.png"
 }

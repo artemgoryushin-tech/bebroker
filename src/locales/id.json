@@ -295,5 +295,7 @@
   "giveaway_yes_there_is_no_fee_to_apply_for_the_giv": "Ya. Tidak ada biaya untuk mendaftar giveaway ini.",
   "giveaway_your_giveaway_application_is_in": "Pengajuan giveaway Anda sudah terkirim",
   "giveaway_your_traffic": "Trafik Anda",
-  "giveaway_head_meta_description": "Giveaway BeBroker. Menangkan platform broker ringan yang siap digunakan dengan setup premium sederhana, peluncuran cepat, dan infrastruktur pertumbuhan yang fleksibel."
+  "giveaway_head_meta_description": "Giveaway BeBroker. Menangkan platform broker ringan yang siap digunakan dengan setup premium sederhana, peluncuran cepat, dan infrastruktur pertumbuhan yang fleksibel.",
+  "resell_canonical_url": "https://bebroker.io/id/resell/",
+  "resell_og_image": "https://bebroker.io/resell/assets/static/og-image.png"
 }

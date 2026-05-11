@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{lang}}">
   <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -15,31 +15,31 @@
     <meta content="true" name="HandheldFriendly" />
     <meta content="width" name="MobileOptimized" />
     <meta content="yes" name="apple-mobile-web-app-capable" />
-    <title>Keep Top Affiliates In-House With a Sub-Brand | BeBroker</title>
+    <title>{{resell_head_title}}</title>
     <meta
       name="description"
-      content="BeBroker Reseller Offer. Let top affiliates promote a sub-brand that feels like their own while payments, CRM, risk, and revenue stay inside your brokerage."
+      content="{{resell_head_meta_description}}"
     />
     <meta name="theme-color" content="#0c111a" />
     <link rel="shortcut icon" type="image/x-icon" href="./assets/static/favicon.ico" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bebroker.io/resell/" />
-    <meta property="og:title" content="Keep Top Affiliates In-House With a Sub-Brand | BeBroker" />
-    <meta property="og:description" content="BeBroker Reseller Offer. Let top affiliates promote a sub-brand that feels like their own while payments, CRM, risk, and revenue stay inside your brokerage." />
-    <meta property="og:image" content="https://bebroker.io/resell/assets/static/og-image.png" />
+    <meta property="og:url" content="{{resell_canonical_url}}" />
+    <meta property="og:title" content="{{resell_head_title}}" />
+    <meta property="og:description" content="{{resell_head_meta_description}}" />
+    <meta property="og:image" content="{{resell_og_image}}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="BeBroker" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content="{{seo_og_locale}}" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://bebroker.io/resell/" />
-    <meta name="twitter:title" content="Keep Top Affiliates In-House With a Sub-Brand | BeBroker" />
-    <meta name="twitter:description" content="BeBroker Reseller Offer. Let top affiliates promote a sub-brand that feels like their own while payments, CRM, risk, and revenue stay inside your brokerage." />
-    <meta name="twitter:image" content="https://bebroker.io/resell/assets/static/og-image.png" />
+    <meta name="twitter:url" content="{{resell_canonical_url}}" />
+    <meta name="twitter:title" content="{{resell_head_title}}" />
+    <meta name="twitter:description" content="{{resell_head_meta_description}}" />
+    <meta name="twitter:image" content="{{resell_og_image}}" />
 
     <style>
       @font-face {
@@ -267,10 +267,92 @@
         white-space: nowrap;
       }
 
-      .btn--icon {
+      .translate-action {
         width: 40px;
+        height: 40px;
         padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #2f3a4c;
+        text-decoration: none;
+        transition: color 0.22s ease, transform 0.22s ease;
+      }
+
+      .translate-action:hover {
+        color: #1652f0;
+        transform: translateY(-1px);
+      }
+
+      .language-menu {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .language-menu summary {
+        list-style: none;
+      }
+
+      .language-menu summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .translate-action:focus-visible {
+        outline: 2px solid var(--red);
+        outline-offset: 2px;
+        border-radius: 8px;
+      }
+
+      .language-menu__dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        z-index: 20;
+        min-width: 184px;
+        padding: 8px;
+        border: 1px solid rgba(201, 211, 225, 0.86);
         border-radius: 12px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 18px 42px rgba(17, 23, 34, 0.16);
+        opacity: 0;
+        transform: translateY(-4px);
+        pointer-events: none;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+
+      .language-menu[open] .language-menu__dropdown {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .language-menu__dropdown a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 36px;
+        padding: 0 10px;
+        border-radius: 8px;
+        color: #26364d;
+        font-size: 14px;
+        font-weight: 650;
+        text-decoration: none;
+      }
+
+      .language-menu__dropdown a:hover,
+      .language-menu__dropdown a:focus-visible {
+        background: #eef3fb;
+        color: #1652f0;
+        outline: none;
+      }
+
+      .language-menu__code {
+        color: #74839a;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
 
       .btn__icon {
@@ -1023,8 +1105,9 @@
           font-size: 13px;
         }
 
-        .topbar-grow__actions .btn--icon {
+        .topbar-grow__actions .translate-action {
           width: 36px;
+          height: 36px;
           padding: 0;
         }
 
@@ -5047,25 +5130,37 @@
           </a>
 
           <nav class="nav nav--grow" aria-label="Main">
-            <a href="#features">Features</a>
-            <a href="#categories-heading">About</a>
-            <a href="#how-it-works">How it Works</a>
+            <a href="#features">{{resell_nav_features}}</a>
+            <a href="#categories-heading">{{resell_nav_about}}</a>
+            <a href="#how-it-works">{{resell_nav_how_it_works}}</a>
             <a href="#faq">FAQ</a>
           </nav>
 
           <div class="topbar-grow__actions">
-            <a class="btn btn--ghost btn--sm btn--icon" href="https://translate.google.com/translate?sl=auto&u=https%3A%2F%2Fbebroker.io%2Fresell%2F" target="_blank" rel="noopener noreferrer" aria-label="Translate page" title="Translate page">
-              <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="currentColor" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm6.7 8h-3.1a14.6 14.6 0 0 0-1.1-5 7.04 7.04 0 0 1 4.2 5ZM12 5.1c.6.9 1.3 2.8 1.5 5.9h-3c.2-3.1.9-5 1.5-5.9ZM5.3 13h3.1c.1 1.9.5 3.6 1.1 5a7.04 7.04 0 0 1-4.2-5Zm3.1-2H5.3a7.04 7.04 0 0 1 4.2-5 14.6 14.6 0 0 0-1.1 5Zm3.6 7.9c-.6-.9-1.3-2.8-1.5-5.9h3c-.2 3.1-.9 5-1.5 5.9Zm1.9-.9c.6-1.4 1-3.1 1.1-5h3.1a7.04 7.04 0 0 1-4.2 5Z"/>
-              </svg>
-            </a>
-            <a class="btn btn--primary btn--sm btn--contact" href="https://t.me/bebroker_official" target="_blank" rel="noopener noreferrer" aria-label="Contact on Telegram">
+            <details class="language-menu">
+              <summary class="translate-action" aria-label="Choose language" title="Choose language">
+                <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm6.7 8h-3.1a14.6 14.6 0 0 0-1.1-5 7.04 7.04 0 0 1 4.2 5ZM12 5.1c.6.9 1.3 2.8 1.5 5.9h-3c.2-3.1.9-5 1.5-5.9ZM5.3 13h3.1c.1 1.9.5 3.6 1.1 5a7.04 7.04 0 0 1-4.2-5Zm3.1-2H5.3a7.04 7.04 0 0 1 4.2-5 14.6 14.6 0 0 0-1.1 5Zm3.6 7.9c-.6-.9-1.3-2.8-1.5-5.9h3c-.2 3.1-.9 5-1.5 5.9Zm1.9-.9c.6-1.4 1-3.1 1.1-5h3.1a7.04 7.04 0 0 1-4.2 5Z"/>
+                </svg>
+              </summary>
+              <div class="language-menu__dropdown" role="menu" aria-label="Available languages">
+                <a href="https://bebroker.io/resell" role="menuitem">English <span class="language-menu__code">EN</span></a>
+                <a href="https://bebroker.io/br/resell" role="menuitem">Português BR <span class="language-menu__code">BR</span></a>
+                <a href="https://bebroker.io/es/resell" role="menuitem">Español <span class="language-menu__code">ES</span></a>
+                <a href="https://bebroker.io/th/resell" role="menuitem">ไทย <span class="language-menu__code">TH</span></a>
+                <a href="https://bebroker.io/pt/resell" role="menuitem">Português <span class="language-menu__code">PT</span></a>
+                <a href="https://bebroker.io/id/resell" role="menuitem">Bahasa Indonesia <span class="language-menu__code">ID</span></a>
+                <a href="https://bebroker.io/ms/resell" role="menuitem">Bahasa Melayu <span class="language-menu__code">MS</span></a>
+                <a href="https://bebroker.io/tl/resell" role="menuitem">Tagalog <span class="language-menu__code">TL</span></a>
+              </div>
+            </details>
+            <a class="btn btn--primary btn--sm btn--contact" href="https://t.me/bebroker_official" target="_blank" rel="noopener noreferrer" aria-label="{{resell_cta_contact_telegram}}">
               <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M21.7 4.3 18.4 20c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7 14.1l-4.5-1.4c-1-.3-1-1 0-1.4L20 4.5c.8-.3 1.5.2 1.7-.2Z"/>
               </svg>
               <span class="btn__label">Telegram</span>
             </a>
-            <a class="btn btn--whatsapp btn--sm btn--contact" href="https://wa.me/447537151205" target="_blank" rel="noopener noreferrer" aria-label="Contact on WhatsApp">
+            <a class="btn btn--whatsapp btn--sm btn--contact" href="https://wa.me/447537151205" target="_blank" rel="noopener noreferrer" aria-label="{{resell_cta_contact_whatsapp}}">
               <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M12 2a9.7 9.7 0 0 0-8.4 14.6L2.5 22l5.5-1.1A9.7 9.7 0 1 0 12 2Zm0 2a7.7 7.7 0 0 1 0 15.4 7.6 7.6 0 0 1-3.8-1l-.4-.2-2.3.5.5-2.2-.2-.4A7.7 7.7 0 0 1 12 4Zm-3 3.9c-.2 0-.5.1-.7.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.6 4 3.5 2 .8 2.4.6 2.8.6.4 0 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.3-1.8-.9c-.3-.1-.5-.1-.7.2l-.6.8c-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2-1.2-.7-.7-1.2-1.5-1.4-1.7-.1-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.8-1.8c-.2-.5-.4-.5-.6-.5H9Z"/>
               </svg>
@@ -5080,77 +5175,77 @@
       <section class="hero hero--grow reveal" id="top">
         <div class="hero-grow__cards hero-grow__cards--left" aria-hidden="true">
           <article class="hero-grow-card hero-grow-card--front">
-            <p class="hero-grow-card__title">Sub-brands</p>
-            <p class="hero-grow-card__meta">Active brands</p>
+            <p class="hero-grow-card__title">{{resell_card_subbrands}}</p>
+            <p class="hero-grow-card__meta">{{resell_card_active_brands}}</p>
             <div class="hero-grow-bars">
               <span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
-            <div class="hero-grow-card__foot"><strong>04</strong><em>live</em></div>
+            <div class="hero-grow-card__foot"><strong>04</strong><em>{{resell_card_live}}</em></div>
           </article>
           <article class="hero-grow-card hero-grow-card--back">
-            <p class="hero-grow-card__title">Retained LTV</p>
-            <p class="hero-grow-card__meta">House-level view</p>
+            <p class="hero-grow-card__title">{{resell_card_retained_ltv}}</p>
+            <p class="hero-grow-card__meta">{{resell_card_house_view}}</p>
             <svg class="hero-grow-line" viewBox="0 0 220 76" xmlns="http://www.w3.org/2000/svg">
               <path d="M5 58L33 58L58 38L84 39L110 49L136 48L162 20L190 22L215 12" />
             </svg>
-            <div class="hero-grow-card__foot"><strong>82%</strong><em>in-house</em></div>
+            <div class="hero-grow-card__foot"><strong>82%</strong><em>{{resell_card_in_house}}</em></div>
           </article>
         </div>
 
         <div class="hero-grow__cards hero-grow__cards--right" aria-hidden="true">
           <article class="hero-grow-card hero-grow-card--front">
-            <p class="hero-grow-card__title">Revenue split</p>
-            <p class="hero-grow-card__meta">Per partner</p>
+            <p class="hero-grow-card__title">{{resell_card_revenue_split}}</p>
+            <p class="hero-grow-card__meta">{{resell_card_per_partner}}</p>
             <svg class="hero-grow-line" viewBox="0 0 220 76" xmlns="http://www.w3.org/2000/svg">
               <path d="M5 58L33 58L58 38L84 39L110 49L136 48L162 20L190 22L215 12" />
             </svg>
-            <div class="hero-grow-card__foot"><strong>Flexible</strong><em>by brand</em></div>
+            <div class="hero-grow-card__foot"><strong>{{resell_card_flexible}}</strong><em>{{resell_card_by_brand}}</em></div>
           </article>
           <article class="hero-grow-card hero-grow-card--back">
-            <p class="hero-grow-card__title">Launch speed</p>
-            <p class="hero-grow-card__meta">New brand</p>
+            <p class="hero-grow-card__title">{{resell_card_launch_speed}}</p>
+            <p class="hero-grow-card__meta">{{resell_card_new_brand}}</p>
             <div class="hero-grow-bars">
               <span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
-            <div class="hero-grow-card__foot"><strong>Days</strong><em>not months</em></div>
+            <div class="hero-grow-card__foot"><strong>{{resell_card_days}}</strong><em>{{resell_card_not_months}}</em></div>
           </article>
         </div>
 
         <div class="container hero-grow__layout">
           <div class="hero-grow__content">
             <h1 class="hero-grow__headline">
-              <span>Keep Top Affiliates</span>
-              <span>In-House With a</span>
-              <span><span class="hero-grow__hl">Custom Sub-Brand</span></span>
+              <span>{{resell_hero_line_1}}</span>
+              <span>{{resell_hero_line_2}}</span>
+              <span><span class="hero-grow__hl">{{resell_hero_line_3}}</span></span>
             </h1>
 
-            <p class="hero-grow__sub">Give proven affiliates a front-end that feels like their own while your brokerage keeps the stack, data, and revenue.</p>
+            <p class="hero-grow__sub">{{resell_hero_subtitle}}</p>
 
             <div class="hero-grow__actions">
               <a class="btn btn--primary btn--contact" href="https://t.me/bebroker_official" target="_blank" rel="noopener noreferrer">
                 <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path fill="currentColor" d="M21.7 4.3 18.4 20c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7 14.1l-4.5-1.4c-1-.3-1-1 0-1.4L20 4.5c.8-.3 1.5.2 1.7-.2Z"/>
                 </svg>
-                <span class="btn__label">Chat on Telegram</span>
+                <span class="btn__label">{{resell_cta_telegram}}</span>
               </a>
               <a class="btn btn--whatsapp btn--contact" href="https://wa.me/447537151205" target="_blank" rel="noopener noreferrer">
                 <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path fill="currentColor" d="M12 2a9.7 9.7 0 0 0-8.4 14.6L2.5 22l5.5-1.1A9.7 9.7 0 1 0 12 2Zm0 2a7.7 7.7 0 0 1 0 15.4 7.6 7.6 0 0 1-3.8-1l-.4-.2-2.3.5.5-2.2-.2-.4A7.7 7.7 0 0 1 12 4Zm-3 3.9c-.2 0-.5.1-.7.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.6 4 3.5 2 .8 2.4.6 2.8.6.4 0 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.3-1.8-.9c-.3-.1-.5-.1-.7.2l-.6.8c-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2-1.2-.7-.7-1.2-1.5-1.4-1.7-.1-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.8-1.8c-.2-.5-.4-.5-.6-.5H9Z"/>
                 </svg>
-                <span class="btn__label">Chat on WhatsApp</span>
+                <span class="btn__label">{{resell_cta_whatsapp}}</span>
               </a>
-              <a class="btn btn--ghost hero-grow__pricing" href="#how-it-works">See How It Works</a>
+              <a class="btn btn--ghost hero-grow__pricing" href="#how-it-works">{{resell_cta_how_it_works}}</a>
             </div>
 
             <div class="hero-grow__partners">
               <img src="./assets/resource/lp/light-brokerage/bebroker-logo.svg" alt="BeBroker" width="132" height="19">
               <span class="hero-grow__x" aria-hidden="true">×</span>
-              <span style="display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 12px;border:1px solid rgba(159,174,196,.6);border-radius:999px;font-size:13px;font-weight:600;color:#314156;background:rgba(255,255,255,.9);">Your Brand</span>
+              <span style="display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 12px;border:1px solid rgba(159,174,196,.6);border-radius:999px;font-size:13px;font-weight:600;color:#314156;background:rgba(255,255,255,.9);">{{resell_your_brand}}</span>
             </div>
             <p class="hero-grow__meta-line">
-              <span class="hero-grow__meta-item"><strong>Affiliate-facing:</strong> Own look, own domain, own funnel</span>
+              <span class="hero-grow__meta-item">{{resell_hero_meta_affiliate}}</span>
               <span class="hero-grow__meta-sep" aria-hidden="true">|</span>
-              <span class="hero-grow__meta-item"><strong>Centralized:</strong> Cashier, KYC, CRM, risk &amp; reporting</span>
+              <span class="hero-grow__meta-item">{{resell_hero_meta_centralized}}</span>
             </p>
           </div>
         </div>
@@ -5181,21 +5276,21 @@
         <div class="container">
           <div class="categories-header">
             <div class="categories-header__left">
-              <h2 id="categories-heading" class="categories-title">Who This Reseller Offer Is For</h2>
-              <p class="categories-desc">Built for brokers and networks that want to keep their strongest partners inside the house.</p>
+              <h2 id="categories-heading" class="categories-title">{{resell_categories_title}}</h2>
+              <p class="categories-desc">{{resell_categories_desc}}</p>
             </div>
             <div class="categories-header__right">
               <div class="giveaway-offer">
-                <p class="giveaway-offer__label">Traffic retention model</p>
+                <p class="giveaway-offer__label">{{resell_offer_label}}</p>
                 <div class="giveaway-offer__body">
                   <div class="giveaway-offer__metric">
-                    <p class="giveaway-offer__metric-title">LTV uplift</p>
+                    <p class="giveaway-offer__metric-title">{{resell_offer_metric_title}}</p>
                     <p class="giveaway-offer__value">54%</p>
-                    <p class="giveaway-offer__metric-note">Higher retained LTV when affiliates launch a sub-brand under your stack.</p>
+                    <p class="giveaway-offer__metric-note">{{resell_offer_metric_note}}</p>
                   </div>
                   <div class="giveaway-offer__content">
-                    <p class="giveaway-offer__headline">Cohort retention indicators</p>
-                    <p class="giveaway-offer__text">Selling a sub-brand to proven affiliates increases client lifetime value while payments, CRM, and revenue stay in-house.</p>
+                    <p class="giveaway-offer__headline">{{resell_offer_headline}}</p>
+                    <p class="giveaway-offer__text">{{resell_offer_text}}</p>
                     <div class="giveaway-offer__features">
                       <div class="giveaway-offer__feature">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -5206,7 +5301,7 @@
                           <path d="M4 18V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                           <path d="M8 14V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                         </svg>
-                        <span>Retained LTV</span>
+                        <span>{{resell_offer_feature_ltv}}</span>
                       </div>
                       <div class="giveaway-offer__feature">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -5215,7 +5310,7 @@
                           <path d="M9 9H9.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
                           <path d="M15 15H15.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
                         </svg>
-                        <span>Sub-brand uplift</span>
+                        <span>{{resell_offer_feature_uplift}}</span>
                       </div>
                     </div>
                     <div class="giveaway-offer__bars" aria-hidden="true">
@@ -5253,8 +5348,8 @@
             <article class="category-card category-card--sky category-card--art">
               <div class="category-card__inner">
                 <div class="category-card__content">
-                  <h3 class="category-card__title">Has active affiliates</h3>
-                  <p class="category-card__sub">Built for brokers already moving meaningful partner traffic.</p>
+                  <h3 class="category-card__title">{{resell_category_1_title}}</h3>
+                  <p class="category-card__sub">{{resell_category_1_text}}</p>
                 </div>
                 <div class="category-card__visual" aria-hidden="true">
                   <img
@@ -5269,8 +5364,8 @@
             <article class="category-card category-card--pink">
               <div class="category-card__inner">
                 <div class="category-card__content">
-                  <h3 class="category-card__title">Needs brand ownership</h3>
-                  <p class="category-card__sub">When simple rev-share is no longer enough to keep the partner close.</p>
+                  <h3 class="category-card__title">{{resell_category_2_title}}</h3>
+                  <p class="category-card__sub">{{resell_category_2_text}}</p>
                 </div>
                 <div class="category-card__visual category-card__visual--ownership" aria-hidden="true">
                   <div class="category-brand-pulse">
@@ -5289,8 +5384,8 @@
             <article class="category-card category-card--grey category-card--revenue">
               <div class="category-card__inner">
                 <div class="category-card__content">
-                  <h3 class="category-card__title">Keeps LTV in-house</h3>
-                  <p class="category-card__sub">Deposits, reporting, and player value stay inside your brokerage.</p>
+                  <h3 class="category-card__title">{{resell_category_3_title}}</h3>
+                  <p class="category-card__sub">{{resell_category_3_text}}</p>
                 </div>
                 <div class="category-card__visual" aria-hidden="true">
                   <img
@@ -5305,8 +5400,8 @@
             <article class="category-card category-card--green">
               <div class="category-card__inner">
                 <div class="category-card__content">
-                  <h3 class="category-card__title">Runs multiple GEOs</h3>
-                  <p class="category-card__sub">Ideal for partner brands split by market, region, or traffic channel.</p>
+                  <h3 class="category-card__title">{{resell_category_4_title}}</h3>
+                  <p class="category-card__sub">{{resell_category_4_text}}</p>
                 </div>
                 <div class="category-card__visual category-card__visual--globe" aria-hidden="true">
                   <div class="category-card__globe-wrap">
@@ -5336,16 +5431,16 @@
                     <span class="ga-bento-avatar" style="--x-start:14px;--x-mid:10px;--x-end:6px;--y-mid:144px;--s:0.92;animation-delay:-3.5s;"><img src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-4.png" alt=""></span>
                     <span class="ga-bento-avatar" style="--x-start:-10px;--x-mid:-8px;--x-end:1px;--y-mid:96px;--s:1;animation-delay:-4.6s;"><img src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png" alt=""></span>
                     <span class="ga-bento-users__logo" aria-hidden="true"></span>
-                    <span class="ga-bento-chip" style="--x-start:-10px;--x-end:-84px;--y-end:336px;--s:0.98;animation-delay:-0.8s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New brand</span>
-                    <span class="ga-bento-chip" style="--x-start:4px;--x-end:4px;--y-end:304px;--s:1;animation-delay:-1.7s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New brand</span>
-                    <span class="ga-bento-chip" style="--x-start:-6px;--x-end:-62px;--y-end:272px;--s:1;animation-delay:-2.7s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New brand</span>
-                    <span class="ga-bento-chip" style="--x-start:8px;--x-end:-44px;--y-end:248px;--s:0.78;animation-delay:-3.5s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New brand</span>
-                    <span class="ga-bento-chip" style="--x-start:-2px;--x-end:-28px;--y-end:354px;--s:0.86;animation-delay:-4.4s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>New brand</span>
+                    <span class="ga-bento-chip" style="--x-start:-10px;--x-end:-84px;--y-end:336px;--s:0.98;animation-delay:-0.8s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>{{resell_card_new_brand}}</span>
+                    <span class="ga-bento-chip" style="--x-start:4px;--x-end:4px;--y-end:304px;--s:1;animation-delay:-1.7s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>{{resell_card_new_brand}}</span>
+                    <span class="ga-bento-chip" style="--x-start:-6px;--x-end:-62px;--y-end:272px;--s:1;animation-delay:-2.7s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>{{resell_card_new_brand}}</span>
+                    <span class="ga-bento-chip" style="--x-start:8px;--x-end:-44px;--y-end:248px;--s:0.78;animation-delay:-3.5s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>{{resell_card_new_brand}}</span>
+                    <span class="ga-bento-chip" style="--x-start:-2px;--x-end:-28px;--y-end:354px;--s:0.86;animation-delay:-4.4s;"><span class="ga-bento-chip__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>{{resell_card_new_brand}}</span>
                   </div>
                 </div>
                 <div class="ga-bento-body">
-                  <h3>Stop Losing Strong Partners to External Deals</h3>
-                  <p>Give high-performing affiliates something that feels like ownership without sending them to another broker.</p>
+                  <h3>{{resell_bento_1_title}}</h3>
+                  <p>{{resell_bento_1_text}}</p>
                 </div>
               </article>
               <article class="ga-bento-card">
@@ -5375,8 +5470,8 @@
                   <div class="ga-bento-secure__vignette" aria-hidden="true"></div>
                 </div>
                 <div class="ga-bento-body">
-                  <h3>Shared Risk, Dealing &amp; Compliance</h3>
-                  <p>Every sub-brand runs on the same operational core, so you do not duplicate the most sensitive parts of the business.</p>
+                  <h3>{{resell_bento_2_title}}</h3>
+                  <p>{{resell_bento_2_text}}</p>
                 </div>
               </article>
             </div>
@@ -5400,14 +5495,14 @@
                   </div>
                 </div>
                 <div class="ga-bento-balance__body">
-                  <p class="ga-bento-balance__label">Retain more player value</p>
-                  <p class="ga-bento-balance__value">Keep LTV &amp; margin</p>
-                  <p class="ga-bento-balance__desc">Traffic still monetizes inside your brokerage instead of being handed to a third party.</p>
+                  <p class="ga-bento-balance__label">{{resell_bento_value_label}}</p>
+                  <p class="ga-bento-balance__value">{{resell_bento_value_title}}</p>
+                  <p class="ga-bento-balance__desc">{{resell_bento_value_text}}</p>
                 </div>
               </article>
               <article class="ga-bento-card ga-bento-critical-card">
                 <div class="ga-bento-critical">
-                  <h3><strong>The affiliate gets a brand.</strong> You keep the business.</h3>
+                  <h3>{{resell_bento_brand_business}}</h3>
                   <span class="ga-bento-critical__icon" aria-hidden="true">
                     <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M4 19h16"></path>
@@ -5498,8 +5593,8 @@
                   </div>
                 </div>
                 <div class="ga-bento-body">
-                  <h3>See every sub-brand from one dashboard</h3>
-                  <p>Track traffic quality, conversion, FTDs, and player value across all partner brands.</p>
+                  <h3>{{resell_bento_dashboard_title}}</h3>
+                  <p>{{resell_bento_dashboard_text}}</p>
                 </div>
               </article>
             </div>
@@ -5543,8 +5638,8 @@
                   </div>
                 </div>
                 <div class="ga-bento-body">
-                  <h3>Brand wrappers without stack duplication</h3>
-                  <p>Launch differentiated funnels, onboarding, and promos without spinning up a separate brokerage backend.</p>
+                  <h3>{{resell_bento_wrappers_title}}</h3>
+                  <p>{{resell_bento_wrappers_text}}</p>
                 </div>
               </article>
               <article class="ga-bento-card">
@@ -5558,8 +5653,8 @@
                   </div>
                 </div>
                 <div class="ga-bento-body">
-                  <h3>Launch new partner brands fast</h3>
-                  <p>Repeat the model for new GEOs, affiliates, or acquisition channels once the first one works.</p>
+                  <h3>{{resell_bento_launch_title}}</h3>
+                  <p>{{resell_bento_launch_text}}</p>
                 </div>
               </article>
             </div>
@@ -5570,17 +5665,17 @@
       <section id="features" class="section platform reveal">
         <div class="container">
           <div class="platform__header">
-            <h2 class="section-title">Built on One Centralized Brokerage Stack</h2>
+            <h2 class="section-title">{{resell_features_title}}</h2>
             <p class="section-text">
-              Offer affiliate-facing sub-brands while keeping the operational core unified, controllable, and profitable.
+              {{resell_features_text}}
             </p>
           </div>
 
           <div class="features-bento stagger">
             <!-- Clean Design — tall card with phone mockup -->
             <article class="feat-bento feat-bento--solid feat-bento--design">
-              <h3 class="feat-bento__title">Affiliate-Facing<br>Branding</h3>
-              <p class="feat-bento__text">Custom domains, visuals, promos, and messaging for each partner-facing brand.</p>
+              <h3 class="feat-bento__title">{{resell_feature_1_title}}</h3>
+              <p class="feat-bento__text">{{resell_feature_1_text}}</p>
               <div class="feat-bento__phone">
                 <img src="./assets/resource/lp/light-brokerage/iphone-17-pro-max.svg" alt="Trading platform on mobile" loading="lazy" decoding="async" />
               </div>
@@ -5588,20 +5683,20 @@
 
             <!-- One Mechanic -->
             <article class="feat-bento feat-bento--light feat-bento--mechanic">
-              <h3 class="feat-bento__title">Shared Trading<br>Core</h3>
-              <p class="feat-bento__text">Every sub-brand runs on the same product logic, execution flow, and operational engine.</p>
+              <h3 class="feat-bento__title">{{resell_feature_2_title}}</h3>
+              <p class="feat-bento__text">{{resell_feature_2_text}}</p>
             </article>
 
             <!-- High Conversion -->
             <article class="feat-bento feat-bento--accent feat-bento--conversion">
-              <h3 class="feat-bento__title">Partner-Specific<br>Funnels</h3>
-              <p class="feat-bento__text">Tailor onboarding, offers, and messaging by GEO, affiliate, or acquisition source.</p>
+              <h3 class="feat-bento__title">{{resell_feature_3_title}}</h3>
+              <p class="feat-bento__text">{{resell_feature_3_text}}</p>
             </article>
 
-            <!-- Shared Payments &amp; Cashier -->
+            <!-- {{resell_feature_4_title}} -->
             <article class="feat-bento feat-bento--light feat-bento--payments">
-              <h3 class="feat-bento__title">Shared Payments &amp; Cashier</h3>
-              <p class="feat-bento__text">Keep deposits, withdrawals, and cashier logic centralized across every brand front.</p>
+              <h3 class="feat-bento__title">{{resell_feature_4_title}}</h3>
+              <p class="feat-bento__text">{{resell_feature_4_text}}</p>
               <div class="feat-bento__logos">
                 <img src="./assets/resource/lp/light-brokerage/payments/visa-new.svg" alt="Visa" />
                 <img src="./assets/resource/lp/light-brokerage/payments/mastercard-new.svg" alt="Mastercard" />
@@ -5611,7 +5706,7 @@
               </div>
             </article>
 
-            <!-- One Back Office -->
+            <!-- {{resell_feature_5_title}} -->
             <article class="feat-bento feat-bento--accent feat-bento--profit">
               <div class="radial-ring">
                 <svg viewBox="0 0 80 80">
@@ -5627,16 +5722,16 @@
                 <span class="radial-ring__label">85%</span>
               </div>
               <div class="feat-bento__info">
-                <h3 class="feat-bento__title">One Back Office</h3>
-                <p class="feat-bento__text">KYC, CRM, cashier, risk, and reporting stay centralized.</p>
+                <h3 class="feat-bento__title">{{resell_feature_5_title}}</h3>
+                <p class="feat-bento__text">{{resell_feature_5_text}}</p>
               </div>
             </article>
 
             <!-- Web & Instant App -->
             <article class="feat-bento feat-bento--light feat-bento--webapp">
               <div class="feat-bento__body">
-                <h3 class="feat-bento__title">Brand by<br>GEO or Partner</h3>
-                <p class="feat-bento__text">Create distinct acquisition fronts for a super affiliate, a GEO, or a channel while fulfillment stays on the same engine.</p>
+                <h3 class="feat-bento__title">{{resell_feature_6_title}}</h3>
+                <p class="feat-bento__text">{{resell_feature_6_text}}</p>
                 <div class="feat-bento__devices">
                   <span class="feat-bento__device-tag">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="12" height="14" rx="1.5"/><line x1="6" y1="12.5" x2="10" y2="12.5"/></svg>
@@ -5663,28 +5758,28 @@
       <section id="how-it-works" class="ga-steps reveal" aria-label="Reseller launch steps">
         <div class="container">
           <div class="ga-steps__head">
-            <h2 class="section-title">How the Reseller Model Works</h2>
-            <p class="section-text">Four steps to keep a top affiliate inside your ecosystem.</p>
+            <h2 class="section-title">{{resell_steps_title}}</h2>
+            <p class="section-text">{{resell_steps_text}}</p>
           </div>
           <div class="ga-steps__grid">
             <article class="ga-steps__card ga-steps__card--dark">
-              <p class="ga-steps__step">Step 1</p>
-              <h3 class="ga-steps__title">Choose the partner &amp; positioning</h3>
+              <p class="ga-steps__step">{{resell_step_1_label}}</p>
+              <h3 class="ga-steps__title">{{resell_step_1_title}}</h3>
               <span class="ga-steps__num" aria-hidden="true">01</span>
             </article>
             <article class="ga-steps__card ga-steps__card--light">
-              <p class="ga-steps__step">Step 2</p>
-              <h3 class="ga-steps__title">Launch the sub-brand</h3>
+              <p class="ga-steps__step">{{resell_step_2_label}}</p>
+              <h3 class="ga-steps__title">{{resell_step_2_title}}</h3>
               <span class="ga-steps__num" aria-hidden="true">02</span>
             </article>
             <article class="ga-steps__card ga-steps__card--dark">
-              <p class="ga-steps__step">Step 3</p>
-              <h3 class="ga-steps__title">Route traffic into your stack</h3>
+              <p class="ga-steps__step">{{resell_step_3_label}}</p>
+              <h3 class="ga-steps__title">{{resell_step_3_title}}</h3>
               <span class="ga-steps__num" aria-hidden="true">03</span>
             </article>
             <article class="ga-steps__card ga-steps__card--light">
-              <p class="ga-steps__step">Step 4</p>
-              <h3 class="ga-steps__title">Track performance and scale</h3>
+              <p class="ga-steps__step">{{resell_step_4_label}}</p>
+              <h3 class="ga-steps__title">{{resell_step_4_title}}</h3>
               <span class="ga-steps__num" aria-hidden="true">04</span>
             </article>
           </div>
@@ -5693,13 +5788,13 @@
               <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M21.7 4.3 18.4 20c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7 14.1l-4.5-1.4c-1-.3-1-1 0-1.4L20 4.5c.8-.3 1.5.2 1.7-.2Z"/>
               </svg>
-              <span class="btn__label">Get Offer on Telegram</span>
+              <span class="btn__label">{{resell_cta_offer_telegram}}</span>
             </a>
             <a class="btn btn--whatsapp btn--contact ga-steps__cta" href="https://wa.me/447537151205" target="_blank" rel="noopener noreferrer">
               <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M12 2a9.7 9.7 0 0 0-8.4 14.6L2.5 22l5.5-1.1A9.7 9.7 0 1 0 12 2Zm0 2a7.7 7.7 0 0 1 0 15.4 7.6 7.6 0 0 1-3.8-1l-.4-.2-2.3.5.5-2.2-.2-.4A7.7 7.7 0 0 1 12 4Zm-3 3.9c-.2 0-.5.1-.7.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.6 4 3.5 2 .8 2.4.6 2.8.6.4 0 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.3-1.8-.9c-.3-.1-.5-.1-.7.2l-.6.8c-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2-1.2-.7-.7-1.2-1.5-1.4-1.7-.1-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.8-1.8c-.2-.5-.4-.5-.6-.5H9Z"/>
               </svg>
-              <span class="btn__label">Get Offer on WhatsApp</span>
+              <span class="btn__label">{{resell_cta_offer_whatsapp}}</span>
             </a>
           </div>
         </div>
@@ -5709,93 +5804,93 @@
         <div class="container">
           <div class="faq-section">
             <div class="faq-left">
-              <h2 class="section-title">Frequently<br>Asked Questions</h2>
-              <p>Need to sanity-check whether a sub-brand model fits your affiliate structure? We can walk you through it.</p>
+              <h2 class="section-title">{{resell_faq_title}}</h2>
+              <p>{{resell_faq_intro}}</p>
               <div class="faq-left__actions">
                 <a class="btn btn--primary btn--contact" href="https://t.me/bebroker_official" target="_blank" rel="noopener noreferrer">
                   <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="currentColor" d="M21.7 4.3 18.4 20c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7 14.1l-4.5-1.4c-1-.3-1-1 0-1.4L20 4.5c.8-.3 1.5.2 1.7-.2Z"/>
                   </svg>
-                  <span class="btn__label">Contact on Telegram</span>
+                  <span class="btn__label">{{resell_cta_contact_telegram}}</span>
                 </a>
                 <a class="btn btn--whatsapp btn--contact" href="https://wa.me/447537151205" target="_blank" rel="noopener noreferrer">
                   <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="currentColor" d="M12 2a9.7 9.7 0 0 0-8.4 14.6L2.5 22l5.5-1.1A9.7 9.7 0 1 0 12 2Zm0 2a7.7 7.7 0 0 1 0 15.4 7.6 7.6 0 0 1-3.8-1l-.4-.2-2.3.5.5-2.2-.2-.4A7.7 7.7 0 0 1 12 4Zm-3 3.9c-.2 0-.5.1-.7.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.6 4 3.5 2 .8 2.4.6 2.8.6.4 0 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.3-1.8-.9c-.3-.1-.5-.1-.7.2l-.6.8c-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2-1.2-.7-.7-1.2-1.5-1.4-1.7-.1-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.8-1.8c-.2-.5-.4-.5-.6-.5H9Z"/>
                   </svg>
-                  <span class="btn__label">Contact on WhatsApp</span>
+                  <span class="btn__label">{{resell_cta_contact_whatsapp}}</span>
                 </a>
               </div>
             </div>
             <div class="faq">
               <details>
-                <summary>Who is this reseller offer for?</summary>
+                <summary>{{resell_faq_1_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    Brokers, networks, and operators with affiliates who want more ownership than a standard rev-share link can offer.
+                    {{resell_faq_1_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>What does the affiliate actually get?</summary>
+                <summary>{{resell_faq_2_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    A dedicated brand wrapper with its own positioning, creative, landing flow, and optionally its own domain.
+                    {{resell_faq_2_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>What stays under my control?</summary>
+                <summary>{{resell_faq_3_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    Cashier, KYC, CRM, risk settings, compliance logic, reporting, and overall commercial visibility remain centralized.
+                    {{resell_faq_3_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>Is this the same as a full white-label brokerage?</summary>
+                <summary>{{resell_faq_4_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    No. A reseller sub-brand gives the affiliate a differentiated front-end without duplicating the entire brokerage stack.
+                    {{resell_faq_4_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>Can each sub-brand use its own domain and creative?</summary>
+                <summary>{{resell_faq_5_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    Yes. That is one of the main benefits: the partner can have a distinct market-facing identity while the back-office stays unified.
+                    {{resell_faq_5_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>Do I need separate payments or risk teams for each brand?</summary>
+                <summary>{{resell_faq_6_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    No. The goal is to keep those functions centralized while only the partner-facing layer changes.
+                    {{resell_faq_6_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>How quickly can a reseller setup go live?</summary>
+                <summary>{{resell_faq_7_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    Launch timing depends on branding scope and operational requirements, but it is designed to move much faster than building a separate brokerage operation.
+                    {{resell_faq_7_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>Can I run more than one sub-brand at once?</summary>
+                <summary>{{resell_faq_8_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    Yes. The model works well for separate GEOs, traffic sources, and high-value affiliates that need a more tailored funnel.
+                    {{resell_faq_8_a}}
                   </p>
                 </div></div>
               </details>
               <details>
-                <summary>Why is this better than sending affiliates to an outside broker?</summary>
+                <summary>{{resell_faq_9_q}}</summary>
                 <div class="faq-answer"><div>
                   <p>
-                    Because you keep player data, deposits, reporting visibility, and long-term revenue inside your own brokerage ecosystem.
+                    {{resell_faq_9_a}}
                   </p>
                 </div></div>
               </details>
@@ -5811,10 +5906,10 @@
         <div class="footer__inner">
           <img class="footer__logo" src="./assets/resource/lp/light-brokerage/bebroker-logo-white.svg" alt="BeBroker" width="148" height="32" />
           <nav class="footer__links">
-            <a href="/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
-            <a href="/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
+            <a href="/privacy-policy/" target="_blank" rel="noopener noreferrer">{{resell_footer_privacy}}</a>
+            <a href="/terms-and-conditions/" target="_blank" rel="noopener noreferrer">{{resell_footer_terms}}</a>
           </nav>
-          <p class="footer__copy">&copy; 2026 BeBroker. All rights reserved.</p>
+          <p class="footer__copy">{{resell_footer_copy}}</p>
         </div>
       </div>
     </footer>
@@ -5822,7 +5917,7 @@
     <div class="modal" id="request-modal" aria-hidden="true">
       <div class="modal__backdrop" data-close-modal></div>
       <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="request-modal-title">
-        <button class="modal__close" type="button" data-close-modal aria-label="Close form">
+        <button class="modal__close" type="button" data-close-modal aria-label="{{resell_modal_close}}">
           &times;
         </button>
 
@@ -5835,52 +5930,52 @@
                 </div>
 
                 <div class="reg-head">
-                  <h2 id="request-modal-title">Request the BeBroker Reseller Offer</h2>
-                  <p>Tell us about your affiliate setup and we will show you how a sub-brand model can keep your best partners in-house.</p>
+                  <h2 id="request-modal-title">{{resell_modal_title}}</h2>
+                  <p>{{resell_modal_text}}</p>
                 </div>
 
                 
 
                 <form class="reg-fields" id="request-modal-form" novalidate>
                   <div class="reg-field">
-                    <label for="modal-name">Name*</label>
-                    <input id="modal-name" name="first_name" type="text" placeholder="Enter your name" required />
+                    <label for="modal-name">{{resell_form_name}}</label>
+                    <input id="modal-name" name="first_name" type="text" placeholder="{{resell_form_name_placeholder}}" required />
                   </div>
 
                   <div class="reg-field">
-                    <label for="modal-email">Email address*</label>
-                    <input id="modal-email" name="email" type="email" placeholder="Enter your email address" required />
+                    <label for="modal-email">{{resell_form_email}}</label>
+                    <input id="modal-email" name="email" type="email" placeholder="{{resell_form_email_placeholder}}" required />
                   </div>
 
                   <div class="reg-field">
-                    <label for="modal-password">Company / Brokerage*</label>
-                    <input id="modal-password" name="company" type="text" placeholder="Enter your company or brokerage" required />
+                    <label for="modal-password">{{resell_form_company}}</label>
+                    <input id="modal-password" name="company" type="text" placeholder="{{resell_form_company_placeholder}}" required />
                   </div>
 
                   <label class="reg-check" for="modal-terms">
                     <input id="modal-terms" name="terms_agree" type="checkbox" required />
-                    <span>I agree to be contacted about the reseller offer and accept the privacy policy and terms.</span>
+                    <span>{{resell_form_terms}}</span>
                   </label>
 
-                  <button class="reg-submit" type="submit">Request Reseller Walkthrough</button>
+                  <button class="reg-submit" type="submit">{{resell_form_submit}}</button>
                 </form>
 
-                <p class="reg-foot">Need legal details first? <a href="/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Read terms</a></p>
+                <p class="reg-foot">{{resell_form_legal_prefix}} <a href="/terms-and-conditions/" target="_blank" rel="noopener noreferrer">{{resell_form_read_terms}}</a></p>
               </div>
             </div>
 
             <div class="reg-right">
               <div class="reg-showcase">
                 <div>
-                  <h3>Let top affiliates promote a brand they can feel is theirs.</h3>
-                  <p>You keep the operational core, data, and revenue visibility.</p>
+                  <h3>{{resell_modal_showcase_title}}</h3>
+                  <p>{{resell_modal_showcase_text}}</p>
                 </div>
 
                 <img class="reg-showcase__glyph" src="./assets/static/bebroker-icon.svg" alt="" aria-hidden="true" width="360" height="360" />
 
                 <div class="reg-note">
-                  <h4>Best for brokers with strong affiliates</h4>
-                  <p>Ideal when a partner is big enough to deserve a custom front-end, but not a separate brokerage stack.</p>
+                  <h4>{{resell_modal_note_title}}</h4>
+                  <p>{{resell_modal_note_text}}</p>
                   <div class="reg-avatars">
                     <div class="reg-avatars__stack">
                       <img class="reg-avatar" alt="Olivia Sparks" src="https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-3.png" loading="lazy">
@@ -5896,9 +5991,9 @@
         </div>
 
         <div class="modal-state" data-modal-success>
-          <h3>Your reseller request is in</h3>
-          <p>Thank you. Our team will review your setup and come back with the best route for a sub-brand rollout.</p>
-          <button class="btn btn--primary" type="button" data-modal-reset>Submit another request</button>
+          <h3>{{resell_success_title}}</h3>
+          <p>{{resell_success_text}}</p>
+          <button class="btn btn--primary" type="button" data-modal-reset>{{resell_success_cta}}</button>
         </div>
       </div>
     </div>

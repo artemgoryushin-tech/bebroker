@@ -63,6 +63,10 @@ function copyStaticLandingPages(staticDirs: string[]): Plugin {
         fs.cpSync(sourceDir, targetDir, {
           recursive: true,
           force: true,
+          filter: (source) => {
+            const relativePath = path.relative(sourceDir, source);
+            return relativePath !== "index.html";
+          },
         });
       }
     },
@@ -97,11 +101,12 @@ function i18nPages(): Plugin {
   const applyTranslations = (
     html: string,
     translations: Record<string, string> | undefined,
+    fallbackTranslations: Record<string, string> | undefined,
     fallbackLang: string,
   ) => {
-    if (!translations) return html.replaceAll("{{lang}}", fallbackLang);
+    if (!translations && !fallbackTranslations) return html.replaceAll("{{lang}}", fallbackLang);
     let result = html;
-    const mergedTranslations = { lang: fallbackLang, ...translations };
+    const mergedTranslations = { lang: fallbackLang, ...fallbackTranslations, ...translations };
     for (const key in mergedTranslations) {
       if (Object.prototype.hasOwnProperty.call(mergedTranslations, key)) {
         result = result.replaceAll(`{{${key}}}`, String(mergedTranslations[key]));
@@ -138,6 +143,31 @@ function i18nPages(): Plugin {
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
         const url = req.url || "/";
+        const [requestPathname] = url.split("?");
+        const localizedResellMatch = requestPathname.match(/^\/([a-z]{2})\/resell(?:\/index\.html|\/)?$/i);
+        const isDefaultResellRoute = /^\/resell(?:\/index\.html|\/)?$/i.test(requestPathname);
+
+        if (localizedResellMatch || isDefaultResellRoute) {
+          const lang = localizedResellMatch ? localizedResellMatch[1].toLowerCase() : defaultLang;
+          const locales = loadLocales();
+          const translations = locales[lang] || locales[defaultLang];
+          const sourcePath = path.resolve(rootDir, "..", "resell", "index.html");
+
+          if (fs.existsSync(sourcePath)) {
+            let result = applyTranslations(
+              fs.readFileSync(sourcePath, "utf-8"),
+              translations,
+              locales[defaultLang],
+              lang,
+            );
+
+            _res.statusCode = 200;
+            _res.setHeader("Content-Type", "text/html; charset=utf-8");
+            _res.end(result);
+            return;
+          }
+        }
+
         const match = url.match(/^\/([a-z]{2})(\/|$)/i);
 
         if (match) {
@@ -151,6 +181,8 @@ function i18nPages(): Plugin {
             htmlPath = "/index.html";
           } else if (rest.startsWith("giveaway")) {
             htmlPath = "/giveaway/index.html";
+          } else if (rest.startsWith("resell")) {
+            htmlPath = "/resell/index.html";
           } else if (rest.startsWith("privacy-policy")) {
             htmlPath = "/privacy-policy/index.html";
           } else if (rest.startsWith("terms-and-conditions")) {
@@ -175,7 +207,7 @@ function i18nPages(): Plugin {
       const lang = resolveLangFromUrl(url);
       const locales = loadLocales();
       const translations = locales[lang] || locales[defaultLang];
-      let result = applyTranslations(html, translations, lang);
+      let result = applyTranslations(html, translations, locales[defaultLang], lang);
 
       const pathname = String(url).split("?")[0];
       const isGiveawayRoute =
@@ -194,21 +226,28 @@ function i18nPages(): Plugin {
     closeBundle() {
       if (!fs.existsSync(localesDir)) return;
 
-      const translatablePages = ["index.html", path.join("giveaway", "index.html")];
+      const translatablePages = [
+        "index.html",
+        path.join("giveaway", "index.html"),
+        path.join("resell", "index.html"),
+      ];
       const locales = loadLocales();
 
       for (const pageRelPath of translatablePages) {
-        const basePath = path.join(outDir, pageRelPath);
+        const distBasePath = path.join(outDir, pageRelPath);
+        const sourceBasePath = path.resolve(rootDir, "..", pageRelPath);
+        const basePath = fs.existsSync(distBasePath) ? distBasePath : sourceBasePath;
         if (!fs.existsSync(basePath)) continue;
 
         const baseHtml = fs.readFileSync(basePath, "utf-8");
+        const fallbackTranslations = locales[defaultLang];
         const baseDir = path.dirname(pageRelPath);
         const baseDirDepth = baseDir === "."
           ? 0
           : baseDir.split(path.sep).filter(Boolean).length;
 
         for (const [lang, translations] of Object.entries(locales)) {
-          const result = applyTranslations(baseHtml, translations, lang);
+          const result = applyTranslations(baseHtml, translations, fallbackTranslations, lang);
           const isDefaultLang = lang === defaultLang;
 
           const localeTargetPath = path.join(outDir, lang, pageRelPath);
@@ -233,9 +272,12 @@ function i18nPages(): Plugin {
               );
             }
 
-            finalHtml = finalHtml
-              .replace(/(?:\.\.\/)+assets\//g, "/assets/")
-              .replace(/\.\/assets\//g, "/assets/");
+            const shouldRootAssetUrls = pageRelPath !== path.join("resell", "index.html");
+            if (shouldRootAssetUrls) {
+              finalHtml = finalHtml
+                .replace(/(?:\.\.\/)+assets\//g, "/assets/")
+                .replace(/\.\/assets\//g, "/assets/");
+            }
 
             const dir = path.dirname(target);
             if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
