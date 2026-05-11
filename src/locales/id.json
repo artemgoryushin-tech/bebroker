@@ -1,4 +1,5 @@
 {
+  "lang": "id",
   "id": "id",
   "head_title": "Platform Broker Ringan | BeBroker",
   "head_meta_description": "Platform Broker Ringan dari BeBroker. Setup broker premium yang disederhanakan dengan peluncuran cepat dan branding yang fleksibel.",
@@ -293,5 +294,6 @@
   "giveaway_works_on_every_device_give_your_traders_": "Bisa digunakan di semua perangkat. Berikan trader Anda sebuah",
   "giveaway_yes_there_is_no_fee_to_apply_for_the_giv": "Ya. Tidak ada biaya untuk mendaftar giveaway ini.",
   "giveaway_your_giveaway_application_is_in": "Pengajuan giveaway Anda sudah terkirim",
-  "giveaway_your_traffic": "Trafik Anda"
+  "giveaway_your_traffic": "Trafik Anda",
+  "giveaway_head_meta_description": "Giveaway BeBroker. Menangkan platform broker ringan yang siap digunakan dengan setup premium sederhana, peluncuran cepat, dan infrastruktur pertumbuhan yang fleksibel."
 }

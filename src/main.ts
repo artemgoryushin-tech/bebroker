@@ -46,10 +46,19 @@ if (window.navigator.language && isFirstLoad) {
     const fullLanguageCode = navigator.language; // e.g., "en-US", "fr-FR", "es"
     const iso2Code = fullLanguageCode.slice(0, 2);
 
-    const langs = ['en', 'es', 'id', 'ms', 'pt', 'th', 'tl'];
+    const langRedirects: Record<string, string> = {
+        en: 'en',
+        es: 'es',
+        id: 'id',
+        ms: 'ms',
+        pt: 'br',
+        th: 'th',
+        tl: 'tl',
+    };
+    const targetLang = langRedirects[iso2Code];
 
-    if (langs.indexOf(iso2Code) !== -1 && currentLang === 'en') {
-        window.location.href = `/${iso2Code}`;
+    if (targetLang && currentLang === 'en') {
+        window.location.href = `/${targetLang}`;
     }
     localStorage.setItem('isLoaded', 'true');
 }
