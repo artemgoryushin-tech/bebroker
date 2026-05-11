@@ -350,7 +350,7 @@
   "resell_bento_value_label": "Retain more player value",
   "resell_bento_value_title": "Keep LTV &amp; margin",
   "resell_bento_value_text": "Traffic still monetizes inside your brokerage instead of being handed to a third party.",
-  "resell_bento_brand_business": "<strong>The affiliate gets a brand.</strong> You keep the business.",
+  "resell_bento_brand_business": "<strong>The affiliate gets a brand.</strong><br>You keep the business.",
   "resell_bento_dashboard_title": "See every sub-brand from one dashboard",
   "resell_bento_dashboard_text": "Track traffic quality, conversion, FTDs, and player value across all partner brands.",
   "resell_bento_wrappers_title": "Brand wrappers without stack duplication",

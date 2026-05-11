@@ -2366,14 +2366,17 @@
         margin-top: 34px;
         margin-bottom: 72px;
       }
+      .ga-bento .container {
+        width: min(1520px, calc(100% - 48px));
+      }
       .ga-bento-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
+        grid-template-columns: minmax(0, 1.06fr) minmax(0, 1.55fr) minmax(0, 1.06fr);
+        gap: 24px;
       }
       .ga-bento-col {
         display: grid;
-        gap: 18px;
+        gap: 24px;
       }
       .ga-bento-card {
         background: #fff;
@@ -2577,26 +2580,27 @@
         background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
         border-color: var(--line);
         box-shadow: 0 12px 30px rgba(4, 8, 14, 0.08);
-        padding: 20px 18px;
+        padding: 28px 30px;
       }
       .ga-bento-critical {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 14px;
+        gap: 20px;
       }
       .ga-bento-critical h3 {
         margin: 0;
-        font-size: clamp(23px, 2.1vw, 34px);
-        line-height: 1.15;
-        letter-spacing: -0.015em;
+        max-width: none;
+        font-size: clamp(30px, 1.9vw, 34px);
+        line-height: 1.12;
+        letter-spacing: 0;
         color: #111722;
       }
       .ga-bento-critical h3 strong { color: var(--ga-accent); font-weight: 700; }
       .ga-bento-critical__icon {
-        width: 82px;
-        height: 82px;
-        border-radius: 20px;
+        width: 76px;
+        height: 76px;
+        border-radius: 18px;
         border: 1px solid #dce5f2;
         background: linear-gradient(180deg, #ffffff, #f2f6fc);
         display: grid;
@@ -2833,28 +2837,28 @@
         to { transform: translateY(0); }
       }
       .ga-bento-convert__item {
-        width: min(300px, calc(100% - 12px));
+        width: min(370px, calc(100% - 28px));
         background: #fff;
         border: 1px solid #dce5f1;
-        border-radius: 12px;
+        border-radius: 14px;
         box-shadow: 0 6px 18px rgba(16, 23, 36, 0.08);
-        padding: 10px 12px;
+        padding: 12px 16px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 14px;
       }
       .ga-bento-convert__avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
         flex-shrink: 0;
         overflow: hidden;
       }
       .ga-bento-convert__avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
       .ga-bento-convert__icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
         border: 1px solid rgba(34, 197, 94, 0.22);
         background: rgba(34, 197, 94, 0.1);
         color: #16a34a;
@@ -2863,14 +2867,14 @@
         flex-shrink: 0;
       }
       .ga-bento-convert__txt { display: flex; flex-direction: column; line-height: 1.2; }
-      .ga-bento-convert__txt strong { font-size: 14px; font-weight: 700; color: #151f31; }
-      .ga-bento-convert__txt span { margin-top: 4px; font-size: 13px; color: #667489; }
+      .ga-bento-convert__txt strong { font-size: 17px; font-weight: 700; color: #151f31; }
+      .ga-bento-convert__txt span { margin-top: 4px; font-size: 15px; color: #667489; }
       .ga-bento-convert__center {
         position: absolute;
         inset-inline: 0;
         top: 50%;
         transform: translateY(-50%);
-        height: 78px;
+        height: 90px;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.96));
         border-top: 1px solid #e6edf7;
         border-bottom: 1px solid #e6edf7;
@@ -5422,7 +5426,7 @@
         </div>
       </section>
 
-      <section class="ga-bento reveal" aria-label="Product insights bento grid">
+      <section class="ga-bento reveal" id="resell-bento" aria-label="Product insights bento grid">
         <div class="container">
           <div class="ga-bento-grid stagger">
             <div class="ga-bento-col">
