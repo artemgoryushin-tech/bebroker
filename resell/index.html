@@ -723,28 +723,36 @@
 
       .hero-grow__headline {
         margin: 0 auto;
-        max-width: 1120px;
-        letter-spacing: -0.03em;
-        font-size: clamp(38px, 4.3vw, 58px);
-        line-height: 0.98;
+        max-width: min(1240px, calc(100vw - 48px));
+        letter-spacing: 0;
+        font-size: clamp(38px, 4vw, 76px);
+        line-height: 0.96;
         font-weight: 700;
         color: #111317;
         text-transform: uppercase;
+        text-wrap: balance;
       }
 
       .hero-grow__headline > span {
         display: block;
-        white-space: nowrap;
+        white-space: normal;
       }
 
       .hero-grow__hl {
         color: #2d66f2;
         font-weight: 600;
         display: inline-block;
+        max-width: 100%;
         opacity: 0;
         transform: translateY(0.22em);
         filter: blur(5px);
         animation: hero-grow-accent-in 0.9s cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+      }
+
+      html[lang="pt-BR"] .hero-grow__headline,
+      html[lang="es"] .hero-grow__headline,
+      html[lang="th"] .hero-grow__headline {
+        font-size: clamp(36px, 3.5vw, 64px);
       }
 
       .hero-grow__headline .hero-grow__hl:nth-of-type(1) { animation-delay: 0.28s; }
@@ -1128,7 +1136,7 @@
         .hero-grow__headline {
           font-size: clamp(30px, 8.4vw, 38px);
           line-height: 1.05;
-          letter-spacing: -0.015em;
+          letter-spacing: 0;
         }
 
         .hero-grow__headline > span {

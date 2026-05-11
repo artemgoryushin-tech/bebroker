@@ -144,14 +144,17 @@ function i18nPages(): Plugin {
       server.middlewares.use((req, _res, next) => {
         const url = req.url || "/";
         const [requestPathname] = url.split("?");
-        const localizedResellMatch = requestPathname.match(/^\/([a-z]{2})\/resell(?:\/index\.html|\/)?$/i);
+        const localizedResellPageMatch = requestPathname.match(
+          /^\/([a-z]{2})\/(resell(?:\/(?:privacy-policy|terms-and-conditions))?)(?:\/index\.html|\/)?$/i,
+        );
         const isDefaultResellRoute = /^\/resell(?:\/index\.html|\/)?$/i.test(requestPathname);
 
-        if (localizedResellMatch || isDefaultResellRoute) {
-          const lang = localizedResellMatch ? localizedResellMatch[1].toLowerCase() : defaultLang;
+        if (localizedResellPageMatch || isDefaultResellRoute) {
+          const lang = localizedResellPageMatch ? localizedResellPageMatch[1].toLowerCase() : defaultLang;
+          const pageRoute = localizedResellPageMatch ? localizedResellPageMatch[2] : "resell";
           const locales = loadLocales();
           const translations = locales[lang] || locales[defaultLang];
-          const sourcePath = path.resolve(rootDir, "..", "resell", "index.html");
+          const sourcePath = path.resolve(rootDir, "..", pageRoute, "index.html");
 
           if (fs.existsSync(sourcePath)) {
             let result = applyTranslations(
@@ -181,6 +184,10 @@ function i18nPages(): Plugin {
             htmlPath = "/index.html";
           } else if (rest.startsWith("giveaway")) {
             htmlPath = "/giveaway/index.html";
+          } else if (rest.startsWith("resell/privacy-policy")) {
+            htmlPath = "/resell/privacy-policy/index.html";
+          } else if (rest.startsWith("resell/terms-and-conditions")) {
+            htmlPath = "/resell/terms-and-conditions/index.html";
           } else if (rest.startsWith("resell")) {
             htmlPath = "/resell/index.html";
           } else if (rest.startsWith("privacy-policy")) {
@@ -229,7 +236,11 @@ function i18nPages(): Plugin {
       const translatablePages = [
         "index.html",
         path.join("giveaway", "index.html"),
+        path.join("privacy-policy", "index.html"),
+        path.join("terms-and-conditions", "index.html"),
         path.join("resell", "index.html"),
+        path.join("resell", "privacy-policy", "index.html"),
+        path.join("resell", "terms-and-conditions", "index.html"),
       ];
       const locales = loadLocales();
 
