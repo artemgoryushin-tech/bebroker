@@ -4142,6 +4142,116 @@
         box-shadow: 0 0 0 3px rgba(41, 97, 255, 0.14);
       }
 
+      .reg-field--phone {
+        position: relative;
+      }
+
+      .phone-control {
+        display: grid;
+        grid-template-columns: minmax(118px, 138px) 1fr;
+        gap: 10px;
+        position: relative;
+      }
+
+      .phone-code {
+        position: relative;
+        min-width: 0;
+      }
+
+      .phone-code__button {
+        width: 100%;
+        height: 44px;
+        border: 1px solid #d5deea;
+        border-radius: 10px;
+        background: #fff;
+        color: #111722;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 12px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .phone-code__button:focus-visible {
+        border-color: #2961ff;
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(41, 97, 255, 0.14);
+      }
+
+      .phone-code__flag {
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .phone-code__chevron {
+        width: 14px;
+        height: 14px;
+        color: #6a778a;
+        transition: transform 0.18s ease;
+      }
+
+      .phone-code.is-open .phone-code__chevron {
+        transform: rotate(180deg);
+      }
+
+      .phone-code__menu {
+        position: absolute;
+        left: 0;
+        top: calc(100% + 8px);
+        z-index: 30;
+        width: min(360px, calc(100vw - 48px));
+        max-height: 286px;
+        overflow: auto;
+        border: 1px solid #c7d3e1;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 18px 40px rgba(16, 23, 36, 0.16);
+        padding: 6px;
+        display: none;
+      }
+
+      .phone-code.is-open .phone-code__menu {
+        display: grid;
+      }
+
+      .phone-code__option {
+        width: 100%;
+        min-height: 46px;
+        border: 0;
+        border-radius: 9px;
+        background: transparent;
+        display: grid;
+        grid-template-columns: 28px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        color: #42526a;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .phone-code__option:hover,
+      .phone-code__option:focus-visible,
+      .phone-code__option.is-selected {
+        background: #f1f5fa;
+        color: #111722;
+        outline: 0;
+      }
+
+      .phone-code__option-name {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .phone-code__option-dial {
+        font-weight: 700;
+      }
+
       .reg-password-wrap {
         position: relative;
       }
@@ -4847,6 +4957,18 @@
 
         .form-row {
           grid-template-columns: 1fr;
+        }
+
+        .phone-control {
+          grid-template-columns: 1fr;
+        }
+
+        .phone-code__button {
+          justify-content: flex-start;
+        }
+
+        .phone-code__menu {
+          width: 100%;
         }
 
         .pricing-layout {
@@ -5958,6 +6080,25 @@
                     <input id="modal-email" name="email" type="email" placeholder="{{resell_form_email_placeholder}}" required />
                   </div>
 
+                  <div class="reg-field reg-field--phone" data-phone-picker>
+                    <label for="modal-phone-local">{{resell_form_phone}}</label>
+                    <div class="phone-control">
+                      <div class="phone-code" data-phone-code>
+                        <button class="phone-code__button" type="button" data-phone-toggle aria-haspopup="listbox" aria-expanded="false">
+                          <span class="phone-code__flag" data-phone-flag aria-hidden="true">🇺🇸</span>
+                          <span data-phone-dial>+1</span>
+                          <svg class="phone-code__chevron" viewBox="0 0 20 20" aria-hidden="true">
+                            <path fill="currentColor" d="M5.5 7.5 10 12l4.5-4.5 1.1 1.1-5.6 5.6-5.6-5.6 1.1-1.1Z"/>
+                          </svg>
+                        </button>
+                        <div class="phone-code__menu" data-phone-menu role="listbox" aria-label="Country calling code"></div>
+                      </div>
+                      <input id="modal-phone-local" name="phone_local" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="{{resell_form_phone_placeholder}}" required data-phone-input />
+                      <input id="modal-phone" name="phone" type="hidden" data-phone-full />
+                      <input name="phone_country" type="hidden" data-phone-country />
+                    </div>
+                  </div>
+
                   <div class="reg-field">
                     <label for="modal-password">{{resell_form_company}}</label>
                     <input id="modal-password" name="company" type="text" placeholder="{{resell_form_company_placeholder}}" required />
@@ -6026,6 +6167,176 @@
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let previouslyFocused = null;
       let lastScrollY = window.scrollY;
+
+      (function setupPhonePickers() {
+        const pickers = document.querySelectorAll('[data-phone-picker]');
+        if (!pickers.length) return;
+
+        const countries = [
+          { iso: 'GB', flag: '🇬🇧', name: 'United Kingdom', dial: '+44' },
+          { iso: 'US', flag: '🇺🇸', name: 'United States', dial: '+1' },
+          { iso: 'DE', flag: '🇩🇪', name: 'Germany', dial: '+49' },
+          { iso: 'ES', flag: '🇪🇸', name: 'Spain', dial: '+34' },
+          { iso: 'FR', flag: '🇫🇷', name: 'France', dial: '+33' },
+          { iso: 'BR', flag: '🇧🇷', name: 'Brazil', dial: '+55' },
+          { iso: 'PT', flag: '🇵🇹', name: 'Portugal', dial: '+351' },
+          { iso: 'TH', flag: '🇹🇭', name: 'Thailand', dial: '+66' },
+          { iso: 'ID', flag: '🇮🇩', name: 'Indonesia', dial: '+62' },
+          { iso: 'MY', flag: '🇲🇾', name: 'Malaysia', dial: '+60' },
+          { iso: 'PH', flag: '🇵🇭', name: 'Philippines', dial: '+63' },
+          { iso: 'AE', flag: '🇦🇪', name: 'United Arab Emirates', dial: '+971' },
+          { iso: 'CA', flag: '🇨🇦', name: 'Canada', dial: '+1' },
+          { iso: 'AU', flag: '🇦🇺', name: 'Australia', dial: '+61' },
+          { iso: 'MX', flag: '🇲🇽', name: 'Mexico', dial: '+52' },
+          { iso: 'AR', flag: '🇦🇷', name: 'Argentina', dial: '+54' },
+          { iso: 'CL', flag: '🇨🇱', name: 'Chile', dial: '+56' },
+          { iso: 'CO', flag: '🇨🇴', name: 'Colombia', dial: '+57' },
+          { iso: 'IN', flag: '🇮🇳', name: 'India', dial: '+91' },
+          { iso: 'NG', flag: '🇳🇬', name: 'Nigeria', dial: '+234' },
+          { iso: 'ZA', flag: '🇿🇦', name: 'South Africa', dial: '+27' },
+          { iso: 'TR', flag: '🇹🇷', name: 'Turkey', dial: '+90' },
+          { iso: 'RU', flag: '🇷🇺', name: 'Russia', dial: '+7' },
+          { iso: 'KZ', flag: '🇰🇿', name: 'Kazakhstan', dial: '+7' },
+        ];
+
+        const pathLanguageMap = {
+          br: 'BR',
+          pt: 'BR',
+          es: 'ES',
+          th: 'TH',
+          id: 'ID',
+          ms: 'MY',
+          tl: 'PH',
+          en: 'US',
+        };
+
+        const normalizeIso = (value) => {
+          const iso = String(value || '').toUpperCase();
+          if (iso === 'UK') return 'GB';
+          return iso;
+        };
+
+        const countryByIso = (iso) => countries.find((country) => country.iso === normalizeIso(iso));
+        const countryByDial = (dial) => countries.find((country) => country.dial === dial);
+
+        const getInitialCountry = () => {
+          const browserLocale = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+          const browserRegion = browserLocale.split('-')[1];
+          const pathLangMatch = window.location.pathname.match(/^\/([a-z]{2})(\/|$)/i);
+          const pathLang = pathLangMatch ? pathLangMatch[1].toLowerCase() : '';
+
+          return (
+            countryByIso(browserRegion) ||
+            countryByIso(pathLanguageMap[pathLang]) ||
+            countryByDial('+1') ||
+            countries[0]
+          );
+        };
+
+        const syncPhoneValue = (picker) => {
+          const input = picker.querySelector('[data-phone-input]');
+          const fullInput = picker.querySelector('[data-phone-full]');
+          const countryInput = picker.querySelector('[data-phone-country]');
+          const selected = countryByIso(picker.dataset.phoneIso) || getInitialCountry();
+          const localValue = input ? input.value.trim() : '';
+
+          if (fullInput) {
+            fullInput.value = localValue.startsWith('+') ? localValue : `${selected.dial}${localValue ? ` ${localValue}` : ''}`;
+          }
+
+          if (countryInput) {
+            countryInput.value = selected.iso;
+          }
+        };
+
+        const closePicker = (picker) => {
+          const phoneCode = picker.querySelector('[data-phone-code]');
+          const toggle = picker.querySelector('[data-phone-toggle]');
+          if (phoneCode) phoneCode.classList.remove('is-open');
+          if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        };
+
+        const closeOtherPickers = (currentPicker) => {
+          pickers.forEach((picker) => {
+            if (picker !== currentPicker) closePicker(picker);
+          });
+        };
+
+        const setCountry = (picker, country) => {
+          const flag = picker.querySelector('[data-phone-flag]');
+          const dial = picker.querySelector('[data-phone-dial]');
+          const options = picker.querySelectorAll('[data-phone-option]');
+
+          picker.dataset.phoneIso = country.iso;
+          if (flag) flag.textContent = country.flag;
+          if (dial) dial.textContent = country.dial;
+
+          options.forEach((option) => {
+            const isSelected = option.dataset.iso === country.iso;
+            option.classList.toggle('is-selected', isSelected);
+            option.setAttribute('aria-selected', String(isSelected));
+          });
+
+          syncPhoneValue(picker);
+        };
+
+        pickers.forEach((picker) => {
+          const menu = picker.querySelector('[data-phone-menu]');
+          const toggle = picker.querySelector('[data-phone-toggle]');
+          const input = picker.querySelector('[data-phone-input]');
+          if (!menu || !toggle || !input) return;
+
+          countries.forEach((country) => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = 'phone-code__option';
+            option.dataset.phoneOption = '';
+            option.dataset.iso = country.iso;
+            option.setAttribute('role', 'option');
+            option.innerHTML = `
+              <span class="phone-code__flag" aria-hidden="true">${country.flag}</span>
+              <span class="phone-code__option-name">${country.name}</span>
+              <span class="phone-code__option-dial">${country.dial}</span>
+            `;
+            option.addEventListener('click', () => {
+              setCountry(picker, country);
+              closePicker(picker);
+              input.focus();
+            });
+            menu.appendChild(option);
+          });
+
+          setCountry(picker, getInitialCountry());
+
+          toggle.addEventListener('click', () => {
+            const phoneCode = picker.querySelector('[data-phone-code]');
+            const isOpen = phoneCode && phoneCode.classList.contains('is-open');
+            closeOtherPickers(picker);
+            if (phoneCode) phoneCode.classList.toggle('is-open', !isOpen);
+            toggle.setAttribute('aria-expanded', String(!isOpen));
+          });
+
+          input.addEventListener('input', () => syncPhoneValue(picker));
+
+          const form = picker.closest('form');
+          if (form) {
+            form.addEventListener('reset', () => {
+              window.setTimeout(() => syncPhoneValue(picker), 0);
+            });
+          }
+        });
+
+        document.addEventListener('click', (event) => {
+          pickers.forEach((picker) => {
+            if (!picker.contains(event.target)) closePicker(picker);
+          });
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key !== 'Escape') return;
+          pickers.forEach(closePicker);
+        });
+      })();
 
       const observer = new IntersectionObserver(
         (entries) => {

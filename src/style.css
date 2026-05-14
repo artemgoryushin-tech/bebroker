@@ -1965,6 +1965,114 @@ section {
 	box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.18);
 }
 
+.phone-control {
+	display: grid;
+	grid-template-columns: minmax(118px, 138px) 1fr;
+	gap: 10px;
+	position: relative;
+}
+
+.phone-code {
+	position: relative;
+	min-width: 0;
+}
+
+.phone-code__button {
+	width: 100%;
+	height: 100%;
+	min-height: 46px;
+	border: 1px solid #37475e;
+	border-radius: 12px;
+	background: #111b2a;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 0 12px;
+	font: inherit;
+	font-size: 15px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.phone-code__button:focus-visible {
+	outline: none;
+	border-color: var(--red);
+	box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.18);
+}
+
+.phone-code__flag {
+	font-size: 20px;
+	line-height: 1;
+}
+
+.phone-code__chevron {
+	width: 14px;
+	height: 14px;
+	color: #8ca0bb;
+	transition: transform 0.18s ease;
+}
+
+.phone-code.is-open .phone-code__chevron {
+	transform: rotate(180deg);
+}
+
+.phone-code__menu {
+	position: absolute;
+	left: 0;
+	top: calc(100% + 8px);
+	z-index: 30;
+	width: min(360px, calc(100vw - 48px));
+	max-height: 286px;
+	overflow: auto;
+	border: 1px solid #2f415a;
+	border-radius: 12px;
+	background: #0f1928;
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+	padding: 6px;
+	display: none;
+}
+
+.phone-code.is-open .phone-code__menu {
+	display: grid;
+}
+
+.phone-code__option {
+	width: 100%;
+	min-height: 46px;
+	border: 0;
+	border-radius: 9px;
+	background: transparent;
+	display: grid;
+	grid-template-columns: 28px 1fr auto;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 10px;
+	color: #c2cede;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
+.phone-code__option:hover,
+.phone-code__option:focus-visible,
+.phone-code__option.is-selected {
+	background: #18253a;
+	color: #fff;
+	outline: 0;
+}
+
+.phone-code__option-name {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.phone-code__option-dial {
+	font-weight: 700;
+}
+
 .field._error {
 	& input {
 		border-color: #f10000;
@@ -2581,6 +2689,18 @@ body.modal-open {
 
 	.form-row {
 		grid-template-columns: 1fr;
+	}
+
+	.phone-control {
+		grid-template-columns: 1fr;
+	}
+
+	.phone-code__button {
+		justify-content: flex-start;
+	}
+
+	.phone-code__menu {
+		width: 100%;
 	}
 
 	.pricing-layout {

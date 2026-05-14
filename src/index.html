@@ -627,8 +627,22 @@
 
             <div class="form-row">
               <div class="field">
-                <label for="phone">{{contact_label_phone}}</label>
-                <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="{{contact_placeholder_phone}}" required />
+                <label for="phone-local">{{contact_label_phone}}</label>
+                <div class="phone-control" data-phone-picker>
+                  <div class="phone-code" data-phone-code>
+                    <button class="phone-code__button" type="button" data-phone-toggle aria-haspopup="listbox" aria-expanded="false">
+                      <span class="phone-code__flag" data-phone-flag aria-hidden="true">🇺🇸</span>
+                      <span data-phone-dial>+1</span>
+                      <svg class="phone-code__chevron" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill="currentColor" d="M5.5 7.5 10 12l4.5-4.5 1.1 1.1-5.6 5.6-5.6-5.6 1.1-1.1Z"/>
+                      </svg>
+                    </button>
+                    <div class="phone-code__menu" data-phone-menu role="listbox" aria-label="Country calling code"></div>
+                  </div>
+                  <input id="phone-local" name="phone_local" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="{{contact_placeholder_phone}}" required data-phone-input />
+                  <input id="phone" name="phone" type="hidden" data-phone-full />
+                  <input name="phone_country" type="hidden" data-phone-country />
+                </div>
                 <span data-error-message></span>
               </div>
               <div class="field">
@@ -807,8 +821,22 @@
           </div>
 
           <div class="field">
-            <label for="modal-phone">{{modal_label_phone}}</label>
-            <input id="modal-phone" name="phone" type="tel" autocomplete="tel" placeholder="{{modal_placeholder_phone}}" required />
+            <label for="modal-phone-local">{{modal_label_phone}}</label>
+            <div class="phone-control" data-phone-picker>
+              <div class="phone-code" data-phone-code>
+                <button class="phone-code__button" type="button" data-phone-toggle aria-haspopup="listbox" aria-expanded="false">
+                  <span class="phone-code__flag" data-phone-flag aria-hidden="true">🇺🇸</span>
+                  <span data-phone-dial>+1</span>
+                  <svg class="phone-code__chevron" viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill="currentColor" d="M5.5 7.5 10 12l4.5-4.5 1.1 1.1-5.6 5.6-5.6-5.6 1.1-1.1Z"/>
+                  </svg>
+                </button>
+                <div class="phone-code__menu" data-phone-menu role="listbox" aria-label="Country calling code"></div>
+              </div>
+              <input id="modal-phone-local" name="phone_local" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="{{modal_placeholder_phone}}" required data-phone-input />
+              <input id="modal-phone" name="phone" type="hidden" data-phone-full />
+              <input name="phone_country" type="hidden" data-phone-country />
+            </div>
             <span data-error-message></span>
           </div>
 
