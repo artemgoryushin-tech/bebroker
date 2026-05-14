@@ -394,31 +394,35 @@ document.addEventListener("keydown", (event: KeyboardEvent) => {
 	}
 });
 
-// utm
-const utm: Record<string, string> = {};
+const collectUtm = (): Record<string, string> => {
+	const utm: Record<string, string> = {};
 
-// Collect&Store Marketing attribution
-const list = ['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'];
-const urlParams = new URLSearchParams(window.location.search);
-const entries = urlParams.entries();
-for (const entry of entries) {
-    localStorage.setItem('param__' + entry[0], entry[1]);
+	// Collect&Store Marketing attribution
+	const list = ['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'];
+	const urlParams = new URLSearchParams(window.location.search);
+	const entries = urlParams.entries();
+	for (const entry of entries) {
+		localStorage.setItem('param__' + entry[0], entry[1]);
+	}
+	for (const key of list) {
+		const value = localStorage.getItem('param__' + key);
+		if (value !== null) {
+			utm[key] = value;
+		}
+	}
+
+	utm.lang_by_browser = window.navigator.language || "en";
+	utm.lang = currentLang || window.navigator.language;
+
+	const url = new URL(window.location.href);
+	utm.landing_url = utm.referrer = url.host + url.pathname;
+
+	const roistatId = getCookieByName('roistat_visit', document.cookie);
+	if (roistatId) utm.roistat_id = roistatId;
+
+	return utm;
 }
-for (const key of list) {
-    const value = localStorage.getItem('param__' + key);
-    if (value !== null) {
-        utm[key] = value;
-    }
-}
 
-utm.lang_by_browser = window.navigator.language || "en";
-utm.lang = currentLang || window.navigator.language;
-
-const url = new URL(window.location.href);
-utm.landing_url = utm.referrer = url.host + url.pathname;
-
-const roistatId = getCookieByName('roistat_visit', document.cookie);
-if (roistatId) utm.roistat_id = roistatId;
 
 // Form Submissions
 if (modalForm && modalFormWrap) {
@@ -444,6 +448,7 @@ if (modalForm && modalFormWrap) {
 			wrapClassNameMod.success(true);
 			modalForm.reset();
 			disableManager.enable();
+			const utm = collectUtm();
 			trackLeadSubmit("modal-form", { utm_source: utm.utm_source, utm_campaign: utm.utm_campaign });
 		},
 		error() {
@@ -454,6 +459,7 @@ if (modalForm && modalFormWrap) {
 	modalForm.addEventListener("submit", async (event: SubmitEvent) => {
 		wrapClassNameMod.loading(true);
 		disableManager.disable();
+		const utm = collectUtm();
 		await submitForm(event, formCallback, utm);
 	});
 
@@ -488,6 +494,7 @@ if (conversionForm) {
 		success() {
 			formClassNameMod.success(true);
 			conversionForm.reset();
+			const utm = collectUtm();
 			trackLeadSubmit("conversion-form", { utm_source: utm.utm_source, utm_campaign: utm.utm_campaign });
 		},
 		error() {
@@ -498,6 +505,7 @@ if (conversionForm) {
 	conversionForm.addEventListener("submit", async (event: SubmitEvent) => {
 		formClassNameMod.loading(true);
 		disableManager.disable();
+		const utm = collectUtm();
 		await submitForm(event, formCallback, utm);
 	});
 
