@@ -73,6 +73,25 @@ function copyStaticLandingPages(staticDirs: string[]): Plugin {
   };
 }
 
+function eventPageRoutes(): Plugin {
+  return {
+    name: "event-page-routes",
+
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const rawUrl = req.url || "/";
+        const [pathname, search = ""] = rawUrl.split("?");
+
+        if (pathname === "/event") {
+          req.url = `/event/index.html${search ? `?${search}` : ""}`;
+        }
+
+        next();
+      });
+    },
+  };
+}
+
 function i18nPages(): Plugin {
   const defaultLang = "en";
   let rootDir = process.cwd();
@@ -303,6 +322,7 @@ function i18nPages(): Plugin {
 export default defineConfig({
   root: path.resolve(process.cwd(), "src"),
   base: "",
+  envPrefix: ["VITE_", "NEXT_PUBLIC_"],
   publicDir: path.resolve(process.cwd(), "public"),
   server: {
     port: 3000,
@@ -314,7 +334,7 @@ export default defineConfig({
       targets: browserslistToTargets(browserslist(">= 0.25%")),
     },
   },
-  plugins: [i18nPages(), copyStaticLandingPages(["giveaway", "resell"])],
+  plugins: [eventPageRoutes(), i18nPages(), copyStaticLandingPages(["giveaway", "resell"])],
   build: {
     emptyOutDir: true,
     outDir: path.resolve(process.cwd(), "dist"),
@@ -322,6 +342,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: path.resolve(process.cwd(), "src/index.html"),
+        event: path.resolve(process.cwd(), "src/event/index.html"),
         giveaway: path.resolve(process.cwd(), "src/giveaway/index.html"),
         privacy: path.resolve(process.cwd(), "src/privacy-policy/index.html"),
         terms: path.resolve(process.cwd(), "src/terms-and-conditions/index.html"),

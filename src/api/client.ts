@@ -7,9 +7,11 @@ async function handleResponse<T>(response: Response): Promise<T> {
 	throw new Error(message);
 }
 
+const FORMS_API_URL = import.meta.env.VITE_FORMS_API_URL || "https://quadcode.foach.site";
+
 export const api = {
 	post: <T, B>(endpoint: string, body: B, signal?: AbortSignal): Promise<T> =>
-		fetch(`${import.meta.env.VITE_FORMS_API_URL}${endpoint}`, {
+		fetch(`${FORMS_API_URL}${endpoint}`, {
 			signal,
 			method: "POST",
 			headers: {
